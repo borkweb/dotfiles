@@ -8,7 +8,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-scripts/phpfolding.vim'
 Plug 'preservim/nerdcommenter'
 Plug 'scrooloose/nerdtree'
-Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'airblade/vim-gitgutter'
 Plug 'neomake/neomake'
