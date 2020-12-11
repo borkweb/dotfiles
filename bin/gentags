@@ -1,0 +1,18 @@
+#!/bin/bash
+
+ctags -Rf .tags \
+	--exclude=.git \
+	--exclude=node_modules \
+	--exclude=vendor \
+	--exclude=test \
+	--exclude=tests \
+	--exclude=.github \
+	--exclude=.env \
+	--exclude=.idea \
+	--exclude=*.min.js \
+	--exclude=*-old \
+	--exclude=*.bak \
+	--exclude=*-bak \
+	--exclude=*-git \
+	--languages=javascript,php,-css,-scss \
+	.
