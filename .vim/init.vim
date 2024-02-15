@@ -143,5 +143,3 @@ hi htmlUnderline            guibg=NONE ctermbg=NONE
 hi htmlUnderlineItalic      guibg=NONE ctermbg=NONE
 
 set suffixes=.bak,~,.o,.h,.info,.swp,.obj,.pyc
-
-call neomake#configure#automake('nrwi', 500)
