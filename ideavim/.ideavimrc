@@ -1,0 +1,183 @@
+
+let mapleader = " "
+
+""
+"" Plugins
+""
+set commentary
+set easymotion
+set surround
+set highlightedyank
+set nerdtree
+set which-key
+
+""
+"" Basic setup
+""
+set number             " Show line numbers
+set relativenumber     " Show relative line numbers
+
+""
+"" Whitespace
+""
+set wrapscan                   " wrap a whole word to the next line
+
+""
+"" Search Settings
+""
+set hlsearch    " Highlight all search terms
+set incsearch   " While typing a search command, show where the pattern - as it was typed - matches
+set ignorecase  " Ignore case when searching
+set smartcase   " Override the ignorecase option if the search pattern contains uppercase characters
+
+""
+"" Misc Settings
+""
+set iskeyword-=_     " Include underscores as part of keyword names
+set sidescrolloff=15 " start scrolling on the side if we are 15 characters from the edge
+set sidescroll=1
+
+""
+"" Ideavim settings
+""
+sethandler <C-C> n-v:ide i:vim       " Use ctrl-c as an ide shortcut in normal and visual modes
+set ideajoin                         " Smart line joins
+set idearefactormode=keep            " Use
+set ideastatusicon=gray              " Keep the icon gray
+
+""
+"" Base mappings
+""
+
+" Switch windows with ctrl + hjkl
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+
+" Jump between methods
+nnoremap [[ :action MethodUp<CR>
+nnoremap ]] :action MethodDown<CR>
+
+let g:NERDTreeMapActivateNode='l'
+let g:NERDTreeMapJumpParent='h'
+
+""
+"" Ideavim Mappings
+""
+nnoremap <c-x> :action HideAllWindows<CR>
+nnoremap <c-s> :action FileStructurePopup<CR>
+nnoremap <c-t> :action ActivateTerminalToolWindow<CR>
+
+" Open NERDTree (use q to exit)
+map <leader>x :NERDTreeToggle<CR>
+
+map <leader>as :action SearchEverywhere<CR>
+map <leader>af :action GotoFile<CR>
+map <leader>aa :action GotoAction<CR>
+
+map <leader>ff :action GotoFile<CR>
+map <leader>fr :action RecentFiles<CR>
+map <leader>fp :action FindInPath<CR>
+map <leader>fl :action RecentLocations<CR>
+map <leader>fs :action NewScratchFile<CR>
+map <leader><leader> :action RecentFiles<CR>
+
+" Go to code
+nmap <leader>gd <Action>(GotoDeclaration)
+nmap <leader>gy <Action>(GotoTypeDeclaration)
+nmap <leader>gi <Action>(GotoImplementation)
+nmap <leader>gu <Action>(ShowUsages)
+nmap <leader>gt <Action>(GotoTest)
+nmap <leader>gf <Action>(Back)
+nmap <leader>gb <Action>(Forward)
+
+nmap <leader>tt :action ActivateTerminalToolWindow<CR>
+nmap <leader>to :action Terminal.OpenInTerminal<CR>
+
+" Comment lines
+map <leader>cc <action>(CommentByLineComment)
+
+map <leader>dd :action ToggleDistractionFreeMode<CR>
+map <leader>dz :action ToggleZenMode<CR>
+map <leader>dp :action TogglePresentationMode<CR>
+map <leader>df :action ToggleFullScreen<CR>
+
+nmap <leader>h :action PreviousTab<CR>
+nmap <leader>l :action NextTab<CR>
+nmap <leader>q :action CloseContent<CR>
+
+map <leader>rc :action ReformatCode<CR>
+
+nmap <leader>wv :action SplitVertically<CR>
+nmap <leader>wh :action SplitHorizontally<CR>
+nmap <leader>wu :action Unsplit<CR>
+nmap <leader>wm :action MoveEditorToOppositeTabGroup<CR>
+
+nnoremap <leader>fp :action FindInPath<CR>
+
+" Jump around with easymotion
+map <leader>j <Plug>(easymotion-s)
+
+" Move lines up and down
+vmap <S-J> <Action>(MoveLineDown)
+vmap <S-K> <Action>(MoveLineUp)
+
+""
+"" Helpful commands
+""
+" gcc = (un)comment out a line
+
+""
+"" Whichkey settings
+""
+set notimeout
+let g:WhichKeyDesc_recent_files = "<leader><leader> Recent files"
+
+let g:WhichKeyDesc_display = "<leader>d Display options"
+let g:WhichKeyDesc_dd_mode = "<leader>dd Distraction free mode"
+let g:WhichKeyDesc_dz_mode = "<leader>dz Zen mode"
+let g:WhichKeyDesc_dp_mode = "<leader>dp Presentation mode"
+let g:WhichKeyDesc_df_mode = "<leader>df Fullscreen mode"
+
+let g:WhichKeyDesc_search = "<leader>a Search actions"
+let g:WhichKeyDesc_search_everywhere = "<leader>as Search everywhere"
+let g:WhichKeyDesc_goto_file = "<leader>af Goto file"
+let g:WhichKeyDesc_goto_action = "<leader>aa Goto action"
+
+let g:WhichKeyDesc_file = "<leader>f File actions"
+let g:WhichKeyDesc_find = "<leader>ff Find file"
+let g:WhichKeyDesc_recent = "<leader>fr Recent files"
+let g:WhichKeyDesc_find_in_path = "<leader>fp Find in path"
+let g:WhichKeyDesc_recent_locations = "<leader>fl Recent locations"
+let g:WhichKeyDesc_new_scratch_file = "<leader>fs New scratch file"
+
+let g:WhichKeyDesc_window = "<leader>w Window options"
+let g:WhichKeyDesc_vsplit = "<leader>wv Split vertically"
+let g:WhichKeyDesc_hsplit = "<leader>wh Split horizontally"
+let g:WhichKeyDesc_unsplit = "<leader>wu Unsplit"
+let g:WhichKeyDesc_move = "<leader>wm Move file to opposite tab group"
+
+let g:WhichKeyDesc_previous_tab = "<leader>h Previous tab"
+let g:WhichKeyDesc_next_tab = "<leader>l Next tab"
+let g:WhichKeyDesc_close_tab = "<leader>q Close tab"
+
+let g:WhichKeyDesc_file_explorer = "<leader>x Toggle file explorer - q to close"
+
+let g:WhichKeyDesc_terminal = "<leader>t Terminal options"
+let g:WhichKeyDesc_terminal_activate = "<leader>tt Show terminal"
+let g:WhichKeyDesc_terminal_open = "<leader>to Open in terminal"
+
+let g:WhichKeyDesc_reformat = "<leader>r Reformat options"
+let g:WhichKeyDesc_reformat_code = "<leader>rc Reformat code"
+
+let g:WhichKeyDesc_jump = "<leader>j Jump"
+
+let g:WhichKeyDesc_codenav = "<leader>g Code navigation"
+let g:WhichKeyDesc_goto_declaration = "<leader>gd Goto declaration"
+let g:WhichKeyDesc_goto_type_declaration = "<leader>gy Goto type declaration"
+let g:WhichKeyDesc_goto_implementation = "<leader>gi Goto implementation"
+let g:WhichKeyDesc_show_usages = "<leader>gu Show usages"
+let g:WhichKeyDesc_goto_test = "<leader>gt Goto test"
+let g:WhichKeyDesc_back = "<leader>gf Go back"
+let g:WhichKeyDesc_forward = "<leader>gb Go forward"
