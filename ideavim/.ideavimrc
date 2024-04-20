@@ -45,6 +45,9 @@ set ideajoin                         " Smart line joins
 set idearefactormode=keep            " Use
 set ideastatusicon=gray              " Keep the icon gray
 
+" Map vim marks to IDEA global marks
+set ideamarks
+
 ""
 "" Base mappings
 ""
@@ -54,6 +57,12 @@ map <C-h> <C-w>h
 map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
+
+" better HJKL
+map H ^
+map L $
+map J }
+map K {
 
 " Jump between methods
 nnoremap [[ :action MethodUp<CR>
@@ -72,17 +81,35 @@ nnoremap <c-t> :action ActivateTerminalToolWindow<CR>
 " Open NERDTree (use q to exit)
 map <leader>x :NERDTreeToggle<CR>
 
-nmap ]b <Action>(GotoNextBookmark)
-nmap [b <Action>(GotoPreviousBookmark)
-nmap ]c <Action>(VcsShowNextChangeMarker)
-nmap [c <Action>(VcsShowPrevChangeMarker)
-nmap ]e <Action>(GotoNextError)
-nmap [e <Action>(GotoPreviousError)
+nmap mm <Action>(ToggleBookmark)
+nmap ms <Action>(ShowBookmarks)
+nmap <leader>mx :delmarks A-Z<CR>
 
+" []
+nmap [b <Action>(PreviousTab)
+nmap ]b <Action>(NextTab)
+nmap [g <Action>(GotoPreviousError)
+nmap ]g <Action>(GotoNextError)
+nmap [u <Action>(GotoPrevElementUnderCaretUsage)
+nmap ]u <Action>(GotoNextElementUnderCaretUsage)
+nmap [o <Action>(PreviousOccurence)
+nmap ]o <Action>(NextOccurence)
+nmap [m <Action>(MethodUp)
+nmap ]m <Action>(MethodDown)
+nmap [c <Action>(JumpToLastChange)
+nmap ]c <Action>(JumpToNextChange)
+
+" collapse
+nmap zz <Action>(ExpandCollapseToggleAction)
+nmap za <Action>(CollapseAllRegions)
+nmap zA <Action>(ExpandAllRegions)
+
+" Search
 map <leader>as :action SearchEverywhere<CR>
 map <leader>af :action GotoFile<CR>
 map <leader>aa :action GotoAction<CR>
 
+" Find
 map <leader>ff :action GotoFile<CR>
 map <leader>fr :action RecentFiles<CR>
 map <leader>fp :action FindInPath<CR>
@@ -91,25 +118,42 @@ map <leader>fs :action NewScratchFile<CR>
 map <leader><leader> :action RecentFiles<CR>
 
 " Go to code
-nmap <leader>gd <Action>(GotoDeclaration)
-nmap <leader>gy <Action>(GotoTypeDeclaration)
-nmap <leader>gi <Action>(GotoImplementation)
-nmap <leader>gu <Action>(ShowUsages)
-nmap <leader>gt <Action>(GotoTest)
-nmap <leader>gf <Action>(Back)
-nmap <leader>gb <Action>(Forward)
+nmap ga <Action>(GotoAction)
+nmap gc <Action>(GotoClass)
+nmap gf <Action>(GotoFile)
+nmap gs <Action>(GotoSymbol)
+nmap gt <Action>(GoToTest)
+nmap gT <Action>(TextSearchAction)
+nmap go <Action>(GotoSuperMethod)
+nmap gd <Action>(GotoDeclaration)
+nmap gD <Action>(GotoTypeDeclaration)
+nmap gi <Action>(GotoImplementation)
+nmap gI <Action>(QuickImplementations)
+nmap gn <Action>(ShowNavBar)
+nmap gu <Action>(ShowUsages)
+nmap gf <Action>(Back)
+nmap gb <Action>(Forward)
 
+" Terminal
 nmap <leader>tt :action ActivateTerminalToolWindow<CR>
 nmap <leader>to :action Terminal.OpenInTerminal<CR>
 
-" Comment lines
-map <leader>cc <action>(CommentByLineComment)
-
+" Display
 map <leader>dd :action ToggleDistractionFreeMode<CR>
 map <leader>dz :action ToggleZenMode<CR>
 map <leader>dp :action TogglePresentationMode<CR>
 map <leader>df :action ToggleFullScreen<CR>
 
+" Tabs
+nmap <leader>1 <Action>(GoToTab1)
+nmap <leader>2 <Action>(GoToTab2)
+nmap <leader>3 <Action>(GoToTab3)
+nmap <leader>4 <Action>(GoToTab4)
+nmap <leader>5 <Action>(GoToTab5)
+nmap <leader>6 <Action>(GoToTab6)
+nmap <leader>7 <Action>(GoToTab7)
+nmap <leader>8 <Action>(GoToTab8)
+nmap <leader>9 <Action>(GoToTab9)
 nmap <leader>h :action PreviousTab<CR>
 nmap <leader>l :action NextTab<CR>
 nmap <leader>q :action CloseContent<CR>
@@ -132,14 +176,19 @@ nmap <leader>wu :action Unsplit<CR>
 nmap <leader>wm :action MoveEditorToOppositeTabGroup<CR>
 nmap <leader>wx <Action>(MaximizeEditorInSplit)
 
-nnoremap <leader>fp :action FindInPath<CR>
-
 " Jump around with easymotion
 map <leader>j <Plug>(easymotion-s)
 
 " Move lines up and down
 vmap <S-J> <Action>(MoveLineDown)
 vmap <S-K> <Action>(MoveLineUp)
+
+" Debugging
+nmap <leader>ec <Action>(ContextDebug)
+nmap <leader>ex <Action>(Debug)
+nmap <leader>eb <Action>(ToggleLineBreakpoint)
+nmap <leader>ee <Action>(EditBreakpoint)
+nmap <leader>ev <Action>(ViewBreakpoints)
 
 ""
 "" Helpful commands
@@ -194,15 +243,6 @@ let g:WhichKeyDesc_reformat_code = "<leader>rc Reformat code"
 
 let g:WhichKeyDesc_jump = "<leader>j Jump"
 
-let g:WhichKeyDesc_codenav = "<leader>g Code navigation"
-let g:WhichKeyDesc_goto_declaration = "<leader>gd Goto declaration"
-let g:WhichKeyDesc_goto_type_declaration = "<leader>gy Goto type declaration"
-let g:WhichKeyDesc_goto_implementation = "<leader>gi Goto implementation"
-let g:WhichKeyDesc_show_usages = "<leader>gu Show usages"
-let g:WhichKeyDesc_goto_test = "<leader>gt Goto test"
-let g:WhichKeyDesc_back = "<leader>gf Go back"
-let g:WhichKeyDesc_forward = "<leader>gb Go forward"
-
 let g:WhichKeyDesc_refactor = "<leader>r Refactor options"
 let g:WhichKeyDesc_rename_element = "<leader>rn Rename element"
 let g:WhichKeyDesc_extract_method = "<leader>rm Extract method"
@@ -210,3 +250,13 @@ let g:WhichKeyDesc_introduce_variable = "<leader>rv Introduce variable"
 let g:WhichKeyDesc_introduce_field = "<leader>rf Introduce field"
 let g:WhichKeyDesc_change_signature = "<leader>rs Change signature"
 let g:WhichKeyDesc_quick_list = "<leader>rr Quick list"
+
+let g:WhichKeyDesc_marks = "<leader>m Mark options"
+let g:WhichKeyDesc_delete_marks = "<leader>mx Delete marks"
+
+let g:WhichKeyDesc_debug = "<leader>e Debug options"
+let g:WhichKeyDesc_context_debug = "<leader>ec Context debug"
+let g:WhichKeyDesc_debug = "<leader>ex Debug"
+let g:WhichKeyDesc_toggle_line_breakpoint = "<leader>eb Toggle line breakpoint"
+let g:WhichKeyDesc_edit_breakpoint = "<leader>ee Edit breakpoint"
+let g:WhichKeyDesc_view_breakpoints = "<leader>ev View breakpoints"

@@ -46,11 +46,14 @@ This setup uses the following vim plugins:
 
 #### Normal mode
 
-* `[[` - Move to the previous function
-* `]]` - Move to the next function
+* `]` - Opens the next menu in Which-Key
+* `[` - Opens the previous menu in Which-Key
 * `<C-x>` - Hide all IntelliJ windows
 * `<C-s>` - Open the file structure
 * `<C-t>` - Open the terminal
+* `g` - Opens the goto menu in Which-Key
+* `m` - Opens the mark menu in Which-Key
+* `mA` - `mZ` - Set a mark from `A` to `Z`
 
 #### Visual mode
 
