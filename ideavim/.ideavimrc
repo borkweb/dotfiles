@@ -72,6 +72,13 @@ nnoremap <c-t> :action ActivateTerminalToolWindow<CR>
 " Open NERDTree (use q to exit)
 map <leader>x :NERDTreeToggle<CR>
 
+nmap ]b <Action>(GotoNextBookmark)
+nmap [b <Action>(GotoPreviousBookmark)
+nmap ]c <Action>(VcsShowNextChangeMarker)
+nmap [c <Action>(VcsShowPrevChangeMarker)
+nmap ]e <Action>(GotoNextError)
+nmap [e <Action>(GotoPreviousError)
+
 map <leader>as :action SearchEverywhere<CR>
 map <leader>af :action GotoFile<CR>
 map <leader>aa :action GotoAction<CR>
@@ -118,9 +125,12 @@ map <leader>rs <Action>(ChangeSignature)
 map <leader>rr <Action>(Refactorings.QuickListPopupAction)
 
 nmap <leader>wv :action SplitVertically<CR>
+nmap <leader>wV :action MoveTabRight<CR>
 nmap <leader>wh :action SplitHorizontally<CR>
+nmap <leader>wH :action MoveTabDown<CR>
 nmap <leader>wu :action Unsplit<CR>
 nmap <leader>wm :action MoveEditorToOppositeTabGroup<CR>
+nmap <leader>wx <Action>(MaximizeEditorInSplit)
 
 nnoremap <leader>fp :action FindInPath<CR>
 
@@ -165,6 +175,9 @@ let g:WhichKeyDesc_vsplit = "<leader>wv Split vertically"
 let g:WhichKeyDesc_hsplit = "<leader>wh Split horizontally"
 let g:WhichKeyDesc_unsplit = "<leader>wu Unsplit"
 let g:WhichKeyDesc_move = "<leader>wm Move file to opposite tab group"
+let g:WhichKeyDesc_move_right = "<leader>wV Move tab right"
+let g:WhichKeyDesc_move_down = "<leader>wH Move tab down"
+let g:WhichKeyDesc_maximize = "<leader>wx Maximize editor in split"
 
 let g:WhichKeyDesc_previous_tab = "<leader>h Previous tab"
 let g:WhichKeyDesc_next_tab = "<leader>l Next tab"
