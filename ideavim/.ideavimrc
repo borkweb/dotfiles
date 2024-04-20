@@ -109,6 +109,14 @@ nmap <leader>q :action CloseContent<CR>
 
 map <leader>rc :action ReformatCode<CR>
 
+" Refactoring
+map <leader>rn <Action>(RenameElement)
+map <leader>rm <Action>(ExtractMethod)
+map <leader>rv <Action>(IntroduceVariable)
+map <leader>rf <Action>(IntroduceField)
+map <leader>rs <Action>(ChangeSignature)
+map <leader>rr <Action>(Refactorings.QuickListPopupAction)
+
 nmap <leader>wv :action SplitVertically<CR>
 nmap <leader>wh :action SplitHorizontally<CR>
 nmap <leader>wu :action Unsplit<CR>
@@ -181,3 +189,11 @@ let g:WhichKeyDesc_show_usages = "<leader>gu Show usages"
 let g:WhichKeyDesc_goto_test = "<leader>gt Goto test"
 let g:WhichKeyDesc_back = "<leader>gf Go back"
 let g:WhichKeyDesc_forward = "<leader>gb Go forward"
+
+let g:WhichKeyDesc_refactor = "<leader>r Refactor options"
+let g:WhichKeyDesc_rename_element = "<leader>rn Rename element"
+let g:WhichKeyDesc_extract_method = "<leader>rm Extract method"
+let g:WhichKeyDesc_introduce_variable = "<leader>rv Introduce variable"
+let g:WhichKeyDesc_introduce_field = "<leader>rf Introduce field"
+let g:WhichKeyDesc_change_signature = "<leader>rs Change signature"
+let g:WhichKeyDesc_quick_list = "<leader>rr Quick list"
