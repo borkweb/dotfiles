@@ -23,7 +23,7 @@ ln -s ~/git/dotfiles/ideavim/.ideavimrc .ideavimrc
 
 ### Windows
 
-Symlink `.ideavimrc` to `%USERPROFILE%\.ideavimrc` using `mklink`.
+Symlink `.ideavimrc` to `%USERPROFILE%\.ideavimrc` using `mklink`. You need to run this in cmd.exe (not PowerShell) as an administrator.
 
 ```bash
 mklink C:\Users\<windows-user>\.ideavimrc \\wsl$\<wsl2-distro>\home\<linux-user>\git\dotfiles\ideavim\.ideavimrc
