@@ -21,6 +21,14 @@ cd ~
 ln -s ~/git/dotfiles/ideavim/.ideavimrc .ideavimrc
 ```
 
+### Windows
+
+Symlink `.ideavimrc` to `%USERPROFILE%\.ideavimrc` using `mklink`.
+
+```bash
+mklink C:\Users\<windows-user>\.ideavimrc \\wsl$\<wsl2-distro>\home\<linux-user>\git\dotfiles\ideavim\.ideavimrc
+```
+
 ## Plugins
 
 This setup uses the following vim plugins:
