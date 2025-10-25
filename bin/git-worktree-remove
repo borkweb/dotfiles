@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# git-worktree-remove - Remove a git worktree
+#
+# Usage: git-worktree-remove [branch-name]
+#
+# Without arguments: Removes the current worktree and outputs the main worktree path
+# With branch-name: Removes the worktree matching that branch name
+# Cannot remove the main worktree.
+
+set -e
+
+# Check if we're in a git repository
+if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    echo "Error: Not in a git repository" >&2
+    exit 1
+fi
+
+main_worktree=$(git worktree list | head -n1 | awk '{print $1}')
+
+if [ -n "$1" ]; then
+    # Branch name provided - remove that worktree
+    branch_name="$1"
+    worktree_name="${branch_name//\//-}"
+    worktree_path=$(git worktree list --porcelain | grep "^worktree " | cut -d' ' -f2- | grep "${worktree_name}")
+
+    if [ -z "$worktree_path" ]; then
+        echo "Error: Worktree matching '$branch_name' not found" >&2
+        exit 1
+    fi
+
+    if [ "$worktree_path" = "$main_worktree" ]; then
+        echo "Error: Cannot remove main worktree" >&2
+        exit 1
+    fi
+
+    git worktree remove "$worktree_path" >&2
+
+    # Output the main worktree path (in case caller wants to cd there)
+    echo "$main_worktree"
+else
+    # No argument - remove current worktree and output main worktree path
+    current_worktree=$(git rev-parse --show-toplevel)
+
+    if [ "$current_worktree" = "$main_worktree" ]; then
+        echo "Error: Cannot remove main worktree" >&2
+        exit 1
+    fi
+
+    git worktree remove "$current_worktree" >&2
+
+    # Output the main worktree path for the caller to cd to
+    echo "$main_worktree"
+fi

@@ -165,52 +165,14 @@ alias gwl='git worktree list'
 
 # Adds a git worktree and creates the corresponding branch
 gwa() {
-    local branch_name="$1"
-    local dir_name="${PWD##*/}"
-    local worktree_name="${branch_name//\//-}"
-    local worktree_path="../${dir_name}-${worktree_name}"
-
-    if git show-ref --verify --quiet "refs/heads/${branch_name}"; then
-        # Branch exists - check it out without -b
-        git worktree add "${worktree_path}" "${branch_name}" && cd "${worktree_path}"
-    else
-        # Branch doesn't exist - create it with -b
-        git worktree add "${worktree_path}" -b "${branch_name}" && cd "${worktree_path}"
-    fi
+    local worktree_path=$(git-worktree-add "$1")
+    [ $? -eq 0 ] && cd "$worktree_path"
 }
 
 # Removes the current worktree and cds to the primary worktree. If a parameter is provided, it removes that specific worktree.
 gwr() {
-    local main_worktree=$(git worktree list | head -n1 | awk '{print $1}')
-
-    if [ -n "$1" ]; then
-        # Branch name provided - remove that worktree
-        local branch_name="$1"
-        local worktree_name="${branch_name//\//-}"
-        local worktree_path=$(git worktree list --porcelain | grep "^worktree " | cut -d' ' -f2- | grep "${worktree_name}")
-
-        if [ -z "$worktree_path" ]; then
-            echo "Worktree matching '$branch_name' not found"
-            return 1
-        fi
-
-        if [ "$worktree_path" = "$main_worktree" ]; then
-            echo "Cannot remove main worktree"
-            return 1
-        fi
-
-        git worktree remove "$worktree_path"
-    else
-        # No argument - remove current worktree and cd to main
-        local current_worktree=$(git rev-parse --show-toplevel)
-
-        if [ "$current_worktree" = "$main_worktree" ]; then
-            echo "Cannot remove main worktree"
-            return 1
-        fi
-
-        cd "$main_worktree" && git worktree remove "$current_worktree"
-    fi
+    local target_path=$(git-worktree-remove "$@")
+    [ $? -eq 0 ] && [ -z "$1" ] && cd "$target_path"
 }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
