@@ -1,0 +1,3 @@
+---
+mu_plugins_source: "{{ dotfiles_dir }}/wordpress/mu-plugins"
+mu_plugins_dest: "{{ wordpress_dev_path }}/mu-plugins"

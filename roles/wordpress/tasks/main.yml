@@ -1,0 +1,43 @@
+---
+- name: Check if WordPress dev path is configured
+  debug:
+    msg: "WordPress dev path: {{ wordpress_dev_path }}"
+
+- name: Ensure WordPress mu-plugins directory exists
+  file:
+    path: "{{ mu_plugins_dest }}"
+    state: directory
+    mode: "0755"
+  when:
+    - wordpress_dev_path is defined
+    - wordpress_dev_path != ""
+
+- name: Find mu-plugins
+  find:
+    paths: "{{ mu_plugins_source }}"
+    patterns: "*.php"
+  register: mu_plugins
+  delegate_to: localhost
+  when:
+    - wordpress_dev_path is defined
+    - wordpress_dev_path != ""
+
+- name: Symlink mu-plugins
+  file:
+    src: "{{ item.path }}"
+    dest: "{{ mu_plugins_dest }}/{{ item.path | basename }}"
+    state: link
+    force: true
+  loop: "{{ mu_plugins.files }}"
+  when:
+    - wordpress_dev_path is defined
+    - wordpress_dev_path != ""
+    - mu_plugins.files is defined
+
+- name: Display mu-plugins installed
+  debug:
+    msg: "Installed {{ mu_plugins.files | length }} mu-plugins to {{ mu_plugins_dest }}"
+  when:
+    - wordpress_dev_path is defined
+    - wordpress_dev_path != ""
+    - mu_plugins.files is defined
