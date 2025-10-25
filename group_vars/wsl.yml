@@ -2,14 +2,11 @@
 package_manager: apt
 
 apt_packages:
-  - neovim
   - tmux
   - zsh
   - bat
   - silversearcher-ag
   - fzf
-  - exuberant-ctags
-  - python3-pip
 
 # WSL-specific environment detection
 wsl_detect_command: "grep -qi microsoft /proc/version && echo true || echo false"

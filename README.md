@@ -49,7 +49,6 @@ Edit variables in `group_vars/all.yml`:
 ```yaml
 wordpress_dev_path: "{{ ansible_env.HOME }}/wordpress-dev"  # Or "" to skip
 install_packages: true           # Set false for config-only
-neovim_install_plugins: true    # Auto-run :PlugInstall
 default_shell: /bin/zsh
 ```
 

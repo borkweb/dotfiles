@@ -29,9 +29,6 @@
     - role: tmux
       tags: [tmux, configs]
 
-    - role: neovim
-      tags: [neovim, editor, configs]
-
     - role: ideavim
       tags: [ideavim, configs]
 

@@ -2,7 +2,6 @@
 # User-customizable settings
 wordpress_dev_path: "{{ ansible_env.HOME }}/wordpress-dev"
 install_packages: true
-neovim_install_plugins: true
 default_shell: /bin/zsh
 
 # Directory paths

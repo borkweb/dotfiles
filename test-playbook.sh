@@ -16,7 +16,7 @@ echo "✓ Dry run complete"
 echo
 
 echo "3. Verify role structure..."
-for role in common shell tmux neovim ideavim bin-utils wordpress; do
+for role in common shell tmux ideavim bin-utils wordpress; do
   if [ -d "roles/$role/tasks" ]; then
     echo "✓ Role $role exists"
   else
