@@ -5,3 +5,7 @@
 
 - name: Install and configure oh-my-zsh
   include_tasks: oh-my-zsh.yml
+
+- name: Configure zsh
+  include_tasks: configure-zsh.yml
+  tags: configs

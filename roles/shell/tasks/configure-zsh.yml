@@ -1,0 +1,22 @@
+---
+- name: Symlink .zshrc
+  file:
+    src: "{{ dotfiles_dir }}/.zshrc"
+    dest: "{{ ansible_env.HOME }}/.zshrc"
+    state: link
+    force: true
+
+- name: Check current shell
+  shell: echo $SHELL
+  register: current_shell
+  changed_when: false
+
+- name: Get zsh path
+  shell: which zsh
+  register: zsh_path
+  changed_when: false
+
+- name: Change default shell to zsh
+  shell: chsh -s {{ zsh_path.stdout }}
+  when: default_shell in zsh_path.stdout and current_shell.stdout != zsh_path.stdout
+  become: true
