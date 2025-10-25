@@ -4,7 +4,7 @@ package_manager: homebrew
 homebrew_packages:
   - tmux
   - zsh
-  - exa
+  - eza
   - bat
   - the_silver_searcher
   - fzf

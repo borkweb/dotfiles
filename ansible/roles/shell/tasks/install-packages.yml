@@ -8,6 +8,79 @@
     - install_packages | bool
     - ansible_os_family == "Debian"
 
+- name: Create apt keyrings directory
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
+- name: Download eza GPG key
+  get_url:
+    url: https://raw.githubusercontent.com/eza-community/eza/main/deb.asc
+    dest: /tmp/eza.asc
+    mode: '0644'
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
+- name: Convert and install eza GPG key
+  shell: gpg --dearmor < /tmp/eza.asc > /etc/apt/keyrings/gierens.gpg
+  args:
+    creates: /etc/apt/keyrings/gierens.gpg
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
+- name: Set permissions on eza GPG key
+  file:
+    path: /etc/apt/keyrings/gierens.gpg
+    mode: '0644'
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
+- name: Add eza repository
+  copy:
+    content: "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main\n"
+    dest: /etc/apt/sources.list.d/gierens.list
+    mode: '0644'
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
+- name: Remove temporary GPG key file
+  file:
+    path: /tmp/eza.asc
+    state: absent
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
+- name: Update apt cache for eza repository
+  apt:
+    update_cache: true
+    cache_valid_time: 0
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
+- name: Install eza (Debian/Ubuntu)
+  apt:
+    name: eza
+    state: present
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
 - name: Install shell packages (macOS)
   homebrew:
     name: "{{ darwin_packages }}"

@@ -1,7 +1,7 @@
 ---
 - name: Symlink .zshrc
   file:
-    src: "{{ dotfiles_dir }}/.zshrc"
+    src: "{{ repo_root }}/.zshrc"
     dest: "{{ ansible_env.HOME }}/.zshrc"
     state: link
     force: true

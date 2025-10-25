@@ -10,14 +10,20 @@ zsh_plugins:
 
 debian_packages:
   - zsh
-  - exa
+  - bat
+  - silversearcher-ag
+  - fzf
+
+# eza is not in standard repos, installed separately
+debian_packages_from_repos:
+  - zsh
   - bat
   - silversearcher-ag
   - fzf
 
 darwin_packages:
   - zsh
-  - exa
+  - eza
   - bat
   - the_silver_searcher
   - fzf

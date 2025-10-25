@@ -148,7 +148,7 @@ unset env
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias pbcopy='~/bin/clip.sh'
-alias ls='exa'
+alias ls='eza'
 alias cat='bat'
 alias c='clear'
 #alias find='fd'

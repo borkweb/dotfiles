@@ -1,4 +1,34 @@
 ---
+- name: Detect system Python interpreter with apt support
+  raw: |
+    for python in /usr/bin/python3 /usr/bin/python3.* /bin/python3; do
+      if [ -x "$python" ] && $python -c "import apt" 2>/dev/null; then
+        echo "$python"
+        exit 0
+      fi
+    done
+    # If no Python with apt found, return system python3
+    echo "/usr/bin/python3"
+  args:
+    executable: /bin/bash
+  register: detected_python
+  changed_when: false
+
+- name: Set ansible_python_interpreter to detected Python
+  set_fact:
+    ansible_python_interpreter: "{{ detected_python.stdout | trim }}"
+
+- name: Bootstrap python3-apt for system Python (if needed)
+  raw: |
+    if ! dpkg -l python3-apt 2>/dev/null | grep -q '^ii'; then
+      apt-get update
+      DEBIAN_FRONTEND=noninteractive apt-get install -y python3-apt
+    fi
+  args:
+    executable: /bin/bash
+  become: true
+  changed_when: false
+
 - name: Update apt cache
   apt:
     update_cache: true
@@ -14,6 +44,7 @@
       - wget
       - tree
       - build-essential
+      - gpg
     state: present
   become: true
   when: install_packages | bool

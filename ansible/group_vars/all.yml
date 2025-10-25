@@ -5,9 +5,10 @@ install_packages: true
 default_shell: /bin/zsh
 
 # Directory paths
+repo_root: "{{ playbook_dir | dirname }}"
+dotfiles_dir: "{{ playbook_dir }}"
 bin_dir: "{{ ansible_env.HOME }}/bin"
 vim_dir: "{{ ansible_env.HOME }}/.vim"
-dotfiles_dir: "{{ playbook_dir }}"
 
 # Oh-my-zsh configuration
 oh_my_zsh_dir: "{{ ansible_env.HOME }}/.oh-my-zsh"

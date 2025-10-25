@@ -1,5 +1,5 @@
 ---
-ideavimrc_source: "{{ dotfiles_dir }}/ideavim/.ideavimrc"
+ideavimrc_source: "{{ repo_root }}/ideavim/.ideavimrc"
 ideavimrc_dest: "{{ ansible_env.HOME }}/.ideavimrc"
 
 required_plugins:
