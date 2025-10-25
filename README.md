@@ -3,6 +3,28 @@ My current dotfiles
 
 ## Quick Start (Ansible)
 
+### Fresh Machine Setup
+
+If you're setting up a completely fresh machine without Ansible installed, use the bootstrap script:
+
+```bash
+git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+./setup.sh
+```
+
+The script will automatically detect your OS and run the appropriate setup. It will install:
+- Command Line Tools (macOS only)
+- Homebrew (macOS) or required apt packages (Ubuntu)
+- Ansible
+- Git and other prerequisites
+
+**Platform-specific scripts** (if you prefer):
+- macOS: `./setup-mac.sh`
+- Ubuntu/Debian/WSL2: `./setup-ubuntu.sh`
+
+After the bootstrap script completes, proceed with the installation steps below.
+
 ### Prerequisites
 
 - Ansible 2.9 or higher
@@ -11,7 +33,7 @@ My current dotfiles
 
 ### Installation
 
-1. Clone this repository:
+1. Clone this repository (skip if you already ran a bootstrap script):
    ```bash
    git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
    cd ~/dotfiles
@@ -19,6 +41,7 @@ My current dotfiles
 
 2. Run the Ansible playbook:
    ```bash
+   cd ansible
    ansible-playbook playbook.yml
    ```
 
@@ -30,16 +53,16 @@ Install only specific components using tags:
 
 ```bash
 # Only shell configuration
-ansible-playbook playbook.yml --tags shell
+cd ansible && ansible-playbook playbook.yml --tags shell
 
 # Shell and tmux
-ansible-playbook playbook.yml --tags shell,tmux
+cd ansible && ansible-playbook playbook.yml --tags shell,tmux
 
 # Everything except WordPress
-ansible-playbook playbook.yml --skip-tags wordpress
+cd ansible && ansible-playbook playbook.yml --skip-tags wordpress
 
 # Config files only (no packages)
-ansible-playbook playbook.yml --skip-tags packages
+cd ansible && ansible-playbook playbook.yml --skip-tags packages
 ```
 
 ### Customization
