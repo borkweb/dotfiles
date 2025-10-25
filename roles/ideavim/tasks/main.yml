@@ -1,0 +1,25 @@
+---
+- name: Symlink .ideavimrc
+  file:
+    src: "{{ ideavimrc_source }}"
+    dest: "{{ ideavimrc_dest }}"
+    state: link
+    force: true
+
+- name: Display WSL Windows symlink instructions
+  debug:
+    msg:
+      - "WSL MANUAL STEP REQUIRED:"
+      - "To use IdeaVim config in Windows IntelliJ from WSL, run this command in Windows cmd.exe (as Administrator):"
+      - "mklink C:\\Users\\<windows-user>\\.ideavimrc \\\\wsl$\\<wsl2-distro>{{ ideavimrc_dest }}"
+      - ""
+      - "Required IntelliJ Plugins:"
+      - "{{ required_plugins | join(', ') }}"
+  when: is_wsl | default(false)
+
+- name: Display required plugins (macOS)
+  debug:
+    msg:
+      - "Required IntelliJ Plugins:"
+      - "{{ required_plugins | join(', ') }}"
+  when: is_macos | default(false)

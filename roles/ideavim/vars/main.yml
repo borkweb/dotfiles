@@ -1,0 +1,11 @@
+---
+ideavimrc_source: "{{ dotfiles_dir }}/ideavim/.ideavimrc"
+ideavimrc_dest: "{{ ansible_env.HOME }}/.ideavimrc"
+
+required_plugins:
+  - IdeaVim
+  - IdeaVim-Quickscope
+  - IdeaVim-EasyMotion
+  - IdeaVimExtension
+  - IdeaVimMulticursor
+  - Which-Key
