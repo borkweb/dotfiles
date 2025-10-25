@@ -1,0 +1,27 @@
+---
+- name: Detect WSL host IP
+  shell: ip route | grep default | awk '{print $3}'
+  register: wsl_host_ip_result
+  changed_when: false
+  when: is_wsl | default(false)
+
+- name: Set WSL host IP fact
+  set_fact:
+    wsl_host_ip: "{{ wsl_host_ip_result.stdout }}"
+  when:
+    - is_wsl | default(false)
+    - wsl_host_ip_result.stdout is defined
+
+- name: Set WSL display fact
+  set_fact:
+    wsl_display: "{{ wsl_host_ip }}:0"
+  when:
+    - is_wsl | default(false)
+    - wsl_host_ip is defined
+
+- name: Display WSL configuration
+  debug:
+    msg:
+      - "WSL Host IP: {{ wsl_host_ip | default('N/A') }}"
+      - "WSL Display: {{ wsl_display | default('N/A') }}"
+  when: is_wsl | default(false)
