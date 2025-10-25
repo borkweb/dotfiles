@@ -6,6 +6,7 @@ echo "=== Ansible Dotfiles Test Suite ==="
 echo
 
 echo "1. Syntax check..."
+cd ansible
 ansible-playbook playbook.yml --syntax-check
 echo "✓ Syntax OK"
 echo
@@ -38,3 +39,4 @@ done
 echo
 
 echo "=== All tests passed ==="
+cd ..
