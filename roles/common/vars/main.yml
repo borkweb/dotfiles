@@ -1,0 +1,7 @@
+---
+required_directories:
+  - "{{ vim_dir }}"
+  - "{{ vim_dir }}/pack"
+  - "{{ vim_dir }}/core"
+  - "{{ bin_dir }}"
+  - "{{ ansible_env.HOME }}/.config"

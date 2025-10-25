@@ -1,0 +1,12 @@
+---
+- name: Include directory creation tasks
+  include_tasks: directories.yml
+
+- name: Display environment info
+  debug:
+    msg:
+      - "Home: {{ ansible_env.HOME }}"
+      - "User: {{ ansible_env.USER }}"
+      - "OS Family: {{ ansible_os_family }}"
+      - "Is WSL: {{ is_wsl | default(false) }}"
+      - "Is macOS: {{ is_macos | default(false) }}"
