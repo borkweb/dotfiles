@@ -3,6 +3,7 @@
 # Ansible
 *.retry
 .ansible/
+.vaultpass
 
 # Test logs
 /tmp/ansible-*.log
