@@ -2,3 +2,7 @@
 - name: Install neovim and dependencies
   include_tasks: install-packages.yml
   tags: packages
+
+- name: Configure neovim
+  include_tasks: configure-vim.yml
+  tags: configs

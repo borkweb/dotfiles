@@ -1,0 +1,39 @@
+---
+- name: Create vim-plug directory
+  file:
+    path: "{{ vim_plug_dest | dirname }}"
+    state: directory
+    mode: "0755"
+
+- name: Download vim-plug
+  get_url:
+    url: "{{ vim_plug_url }}"
+    dest: "{{ vim_plug_dest }}"
+    mode: "0644"
+
+- name: Sync .vim directory
+  synchronize:
+    src: "{{ dotfiles_dir }}/.vim/"
+    dest: "{{ vim_dir }}/"
+    delete: false
+    recursive: true
+  delegate_to: localhost
+
+- name: Ensure .vim/core directory exists
+  file:
+    path: "{{ vim_dir }}/core"
+    state: directory
+    mode: "0755"
+
+- name: Install vim plugins
+  shell: nvim --headless +PlugInstall +qall
+  args:
+    creates: "{{ vim_dir }}/plugged"
+  when: neovim_install_plugins | bool
+  failed_when: false
+  register: plug_install_result
+
+- name: Display plugin installation result
+  debug:
+    msg: "Vim plugins installation: {{ 'Success' if plug_install_result.rc == 0 else 'Manual run may be needed' }}"
+  when: neovim_install_plugins | bool
