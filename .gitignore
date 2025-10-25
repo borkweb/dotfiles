@@ -1,4 +1,7 @@
+.idea
+.vim/pack
 .vim/plugged
+.vim/.netrwhist
 
 id_rsa
 id_rsa.pub
