@@ -1,0 +1,41 @@
+---
+- name: Ensure bin directory exists
+  file:
+    path: "{{ bin_scripts_dest }}"
+    state: directory
+    mode: "0755"
+
+- name: Find all bin scripts
+  find:
+    paths: "{{ bin_scripts_source }}"
+    file_type: file
+  register: bin_scripts
+  delegate_to: localhost
+
+- name: Symlink bin scripts
+  file:
+    src: "{{ item.path }}"
+    dest: "{{ bin_scripts_dest }}/{{ item.path | basename }}"
+    state: link
+    force: true
+  loop: "{{ bin_scripts.files }}"
+
+- name: Make bin scripts executable
+  file:
+    path: "{{ bin_scripts_dest }}/{{ item.path | basename }}"
+    mode: "0755"
+  loop: "{{ bin_scripts.files }}"
+
+- name: Verify bin directory in PATH
+  shell: echo $PATH | grep -q "{{ bin_scripts_dest }}"
+  register: path_check
+  changed_when: false
+  failed_when: false
+
+- name: Display PATH warning if needed
+  debug:
+    msg:
+      - "WARNING: {{ bin_scripts_dest }} is not in PATH"
+      - "Add this to your shell configuration:"
+      - "export PATH=\"{{ bin_scripts_dest }}:$PATH\""
+  when: path_check.rc != 0
