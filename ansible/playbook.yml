@@ -35,6 +35,9 @@
     - role: bin-utils
       tags: [bin-utils, utils]
 
+    - role: git-repos
+      tags: [git-repos, repos]
+
     - role: wordpress
       tags: [wordpress]
       when: wordpress_dev_path is defined and wordpress_dev_path != ""

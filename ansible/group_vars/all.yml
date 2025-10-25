@@ -9,6 +9,16 @@ repo_root: "{{ playbook_dir | dirname }}"
 dotfiles_dir: "{{ playbook_dir }}"
 bin_dir: "{{ ansible_env.HOME }}/bin"
 vim_dir: "{{ ansible_env.HOME }}/.vim"
+git_dir: "{{ ansible_env.HOME }}/git"
+sites_dir: "{{ ansible_env.HOME }}/sites"
+
+# Git repositories to clone into ~/git
+git_repositories:
+  - repo: git@github.com:borkweb/dotfiles-keys.git
+    dest: dotfiles-keys
+
+  - repo: git@github.com:borkweb/bork-ai.git
+    dest: bork-ai
 
 # Oh-my-zsh configuration
 oh_my_zsh_dir: "{{ ansible_env.HOME }}/.oh-my-zsh"

@@ -1,0 +1,38 @@
+---
+- name: Ensure git is installed
+  package:
+    name: git
+    state: present
+  become: true
+  when: install_packages | bool
+
+- name: Check which repositories are missing
+  stat:
+    path: "{{ git_dir }}/{{ item.dest }}"
+  loop: "{{ git_repositories }}"
+  when:
+    - git_repositories is defined
+    - git_repositories | length > 0
+  register: repo_stat_results
+
+- name: Clone missing git repositories
+  git:
+    repo: "{{ item.item.repo }}"
+    dest: "{{ git_dir }}/{{ item.item.dest }}"
+    version: "{{ item.item.version | default('HEAD') }}"
+    update: false
+  loop: "{{ repo_stat_results.results }}"
+  when:
+    - repo_stat_results is defined
+    - not repo_stat_results.skipped | default(false)
+    - not item.stat.exists
+  register: git_clone_results
+
+- name: Display cloned repositories
+  debug:
+    msg: "Repository {{ item.item.item.dest }} cloned successfully"
+  loop: "{{ git_clone_results.results }}"
+  when:
+    - git_clone_results is defined
+    - not git_clone_results.skipped | default(false)
+    - item.changed

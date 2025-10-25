@@ -1,0 +1,4 @@
+---
+# Default empty list if not defined elsewhere
+# Repositories are only cloned if missing - existing repos are not updated
+git_repositories: []

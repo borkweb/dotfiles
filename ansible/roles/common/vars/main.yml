@@ -5,3 +5,5 @@ required_directories:
   - "{{ vim_dir }}/core"
   - "{{ bin_dir }}"
   - "{{ ansible_env.HOME }}/.config"
+  - "{{ git_dir }}"
+  - "{{ sites_dir }}"
