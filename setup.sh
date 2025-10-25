@@ -14,7 +14,7 @@ case "${OS}" in
         echo "Detected: macOS"
         echo "Running macOS bootstrap script..."
         echo
-        ./setup-mac.sh
+        ./setup/setup-mac.sh
         ;;
     Linux*)
         # Check if it's Ubuntu/Debian by looking for apt
@@ -22,7 +22,7 @@ case "${OS}" in
             echo "Detected: Ubuntu/Debian Linux"
             echo "Running Ubuntu bootstrap script..."
             echo
-            ./setup-ubuntu.sh
+            ./setup/setup-ubuntu.sh
         else
             echo "Error: Unsupported Linux distribution"
             echo "This script supports Ubuntu/Debian systems with apt-get."
