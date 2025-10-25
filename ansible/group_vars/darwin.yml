@@ -17,3 +17,12 @@ homebrew_taps:
 
 homebrew_cask_packages:
   - font-meslo-lg-nerd-font
+  - postman
+  - spotify
+  - docker
+  - iterm2
+  - google-chrome
+  - firefox
+  - tableplus
+  - cursor
+  - wordpress-studio
