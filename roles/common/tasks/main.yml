@@ -2,6 +2,14 @@
 - name: Include directory creation tasks
   include_tasks: directories.yml
 
+- name: Include Debian package tasks
+  include_tasks: packages-debian.yml
+  when: ansible_os_family == "Debian"
+
+- name: Include macOS package tasks
+  include_tasks: packages-darwin.yml
+  when: is_macos | default(false)
+
 - name: Display environment info
   debug:
     msg:

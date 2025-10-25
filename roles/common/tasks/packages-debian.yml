@@ -1,0 +1,19 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+  when: install_packages | bool
+
+- name: Install base packages (Debian/Ubuntu)
+  apt:
+    name:
+      - git
+      - curl
+      - wget
+      - tree
+      - build-essential
+    state: present
+  become: true
+  when: install_packages | bool

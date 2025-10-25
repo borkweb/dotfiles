@@ -1,0 +1,22 @@
+---
+- name: Check if Homebrew is installed
+  stat:
+    path: /opt/homebrew/bin/brew
+  register: homebrew_check
+  when: install_packages | bool
+
+- name: Install Homebrew
+  shell: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  when:
+    - install_packages | bool
+    - not homebrew_check.stat.exists
+
+- name: Install base packages (macOS)
+  homebrew:
+    name:
+      - git
+      - curl
+      - wget
+      - tree
+    state: present
+  when: install_packages | bool
