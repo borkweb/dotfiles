@@ -48,6 +48,10 @@
       - hub
       - nodejs
       - npm
+      - ffmpeg
+      - libgd-dev
+      - libgdbm-dev
+      - subversion
     state: present
   become: true
   when: install_packages | bool

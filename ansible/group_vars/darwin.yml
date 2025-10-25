@@ -11,6 +11,12 @@ homebrew_packages:
   - hub
   - node
   - bun
+  - curl
+  - wget
+  - ffmpeg
+  - gd
+  - gdbm
+  - subversion
 
 homebrew_taps:
   - homebrew/cask-fonts
