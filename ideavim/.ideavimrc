@@ -15,7 +15,6 @@ set which-key
 "" Basic setup
 ""
 set number             " Show line numbers
-set relativenumber     " Show relative line numbers
 
 ""
 "" Whitespace
@@ -59,10 +58,10 @@ map <C-k> <C-w>k
 map <C-l> <C-w>l
 
 " better HJKL
-map H ^
-map L $
-map J }
-map K {
+nmap <leader><C-h> ^
+nmap <leader><C-l> $
+nmap <leader><C-j> }
+nmap <leader><C-k> {
 
 " Jump between methods
 nnoremap [[ :action MethodUp<CR>
