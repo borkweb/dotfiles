@@ -1,0 +1,37 @@
+---
+- name: Check if oh-my-zsh is installed
+  stat:
+    path: "{{ oh_my_zsh_dir }}"
+  register: oh_my_zsh_stat
+
+- name: Download oh-my-zsh installer
+  get_url:
+    url: "{{ oh_my_zsh_install_script }}"
+    dest: /tmp/install-oh-my-zsh.sh
+    mode: "0755"
+  when: not oh_my_zsh_stat.stat.exists
+
+- name: Install oh-my-zsh
+  shell: sh /tmp/install-oh-my-zsh.sh --unattended
+  args:
+    creates: "{{ oh_my_zsh_dir }}"
+  environment:
+    RUNZSH: "no"
+    CHSH: "no"
+
+- name: Remove oh-my-zsh installer
+  file:
+    path: /tmp/install-oh-my-zsh.sh
+    state: absent
+
+- name: Check if powerlevel10k is installed
+  stat:
+    path: "{{ powerlevel10k_dest }}"
+  register: p10k_stat
+
+- name: Clone powerlevel10k theme
+  git:
+    repo: "{{ powerlevel10k_repo }}"
+    dest: "{{ powerlevel10k_dest }}"
+    depth: 1
+  when: not p10k_stat.stat.exists
