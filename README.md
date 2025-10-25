@@ -1,6 +1,62 @@
 # dotfiles
 My current dotfiles
 
+## Quick Start (Ansible)
+
+### Prerequisites
+
+- Ansible 2.9 or higher
+- Git
+- sudo access (for package installation)
+
+### Installation
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
+   cd ~/dotfiles
+   ```
+
+2. Run the Ansible playbook:
+   ```bash
+   ansible-playbook playbook.yml
+   ```
+
+3. For WSL users: Manually create Windows symlink for IdeaVim (see output for command)
+
+### Selective Installation
+
+Install only specific components using tags:
+
+```bash
+# Only shell configuration
+ansible-playbook playbook.yml --tags shell
+
+# Shell and tmux
+ansible-playbook playbook.yml --tags shell,tmux
+
+# Everything except WordPress
+ansible-playbook playbook.yml --skip-tags wordpress
+
+# Config files only (no packages)
+ansible-playbook playbook.yml --skip-tags packages
+```
+
+### Customization
+
+Edit variables in `group_vars/all.yml`:
+
+```yaml
+wordpress_dev_path: "{{ ansible_env.HOME }}/wordpress-dev"  # Or "" to skip
+install_packages: true           # Set false for config-only
+neovim_install_plugins: true    # Auto-run :PlugInstall
+default_shell: /bin/zsh
+```
+
+## Manual Installation (Legacy)
+
+If you prefer to set up manually without Ansible, see the configuration details below.
+
 ## vim
 
 I use [neovim](https://neovim.io/) rather than plain old vim. With it comes some better performing things. Here are the primary plugins that I leverage:
