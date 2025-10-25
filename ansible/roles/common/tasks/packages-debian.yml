@@ -45,6 +45,17 @@
       - tree
       - build-essential
       - gpg
+      - hub
+      - nodejs
+      - npm
     state: present
   become: true
   when: install_packages | bool
+
+- name: Install bun (Debian/Ubuntu)
+  shell: curl -fsSL https://bun.sh/install | bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.bun/bin/bun"
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"

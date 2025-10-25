@@ -8,6 +8,9 @@ homebrew_packages:
   - bat
   - the_silver_searcher
   - fzf
+  - hub
+  - node
+  - bun
 
 homebrew_taps:
   - homebrew/cask-fonts
