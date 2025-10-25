@@ -1,15 +1,26 @@
 ---
-- name: Check if Homebrew is installed
+- name: Check if Homebrew is installed (Apple Silicon)
   stat:
     path: /opt/homebrew/bin/brew
-  register: homebrew_check
+  register: homebrew_silicon
+  when: install_packages | bool
+
+- name: Check if Homebrew is installed (Intel)
+  stat:
+    path: /usr/local/bin/brew
+  register: homebrew_intel
+  when: install_packages | bool
+
+- name: Set Homebrew installed fact
+  set_fact:
+    homebrew_installed: "{{ homebrew_silicon.stat.exists | default(false) or homebrew_intel.stat.exists | default(false) }}"
   when: install_packages | bool
 
 - name: Install Homebrew
   shell: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   when:
     - install_packages | bool
-    - not homebrew_check.stat.exists
+    - not homebrew_installed
 
 - name: Install base packages (macOS)
   homebrew:
