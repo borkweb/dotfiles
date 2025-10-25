@@ -1,0 +1,38 @@
+---
+- name: Install tmux (Debian/Ubuntu)
+  apt:
+    name: "{{ tmux_package_debian }}"
+    state: present
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+  tags: packages
+
+- name: Install tmux (macOS)
+  homebrew:
+    name: "{{ tmux_package_darwin }}"
+    state: present
+  when:
+    - install_packages | bool
+    - is_macos | default(false)
+  tags: packages
+
+- name: Symlink .tmux.conf
+  file:
+    src: "{{ dotfiles_dir }}/.tmux.conf"
+    dest: "{{ ansible_env.HOME }}/.tmux.conf"
+    state: link
+    force: true
+  tags: configs
+
+- name: Verify tmux installation
+  command: tmux -V
+  register: tmux_version
+  changed_when: false
+  failed_when: false
+
+- name: Display tmux version
+  debug:
+    msg: "Tmux version: {{ tmux_version.stdout }}"
+  when: tmux_version.rc == 0

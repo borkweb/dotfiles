@@ -1,0 +1,3 @@
+---
+tmux_package_debian: tmux
+tmux_package_darwin: tmux
