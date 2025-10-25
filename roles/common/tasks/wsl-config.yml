@@ -25,3 +25,14 @@
       - "WSL Host IP: {{ wsl_host_ip | default('N/A') }}"
       - "WSL Display: {{ wsl_display | default('N/A') }}"
   when: is_wsl | default(false)
+
+- name: Add WSL environment variables to zshrc
+  blockinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    marker: "# {mark} ANSIBLE MANAGED WSL CONFIG"
+    block: |
+      export HOST_IP={{ wsl_host_ip }}
+      export DISPLAY={{ wsl_display }}
+  when:
+    - is_wsl | default(false)
+    - wsl_host_ip is defined
