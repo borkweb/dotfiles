@@ -162,6 +162,8 @@ alias vi='/bin/vi'
 alias gi='git'
 alias gti='git'
 alias gwl='git worktree list'
+alias wa='gwa'
+alias wr='gwr'
 
 # Adds a git worktree and creates the corresponding branch
 gwa() {
