@@ -3,3 +3,6 @@
 # Ansible
 *.retry
 .ansible/
+
+# Test logs
+/tmp/ansible-*.log
