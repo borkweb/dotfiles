@@ -1,0 +1,4 @@
+---
+- name: Install shell packages
+  include_tasks: install-packages.yml
+  tags: packages
