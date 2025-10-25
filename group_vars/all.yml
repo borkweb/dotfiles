@@ -1,0 +1,15 @@
+---
+# User-customizable settings
+wordpress_dev_path: "{{ ansible_env.HOME }}/wordpress-dev"
+install_packages: true
+neovim_install_plugins: true
+default_shell: /bin/zsh
+
+# Directory paths
+bin_dir: "{{ ansible_env.HOME }}/bin"
+vim_dir: "{{ ansible_env.HOME }}/.vim"
+dotfiles_dir: "{{ playbook_dir }}"
+
+# Oh-my-zsh configuration
+oh_my_zsh_dir: "{{ ansible_env.HOME }}/.oh-my-zsh"
+oh_my_zsh_custom: "{{ oh_my_zsh_dir }}/custom"

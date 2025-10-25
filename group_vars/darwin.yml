@@ -1,0 +1,18 @@
+---
+package_manager: homebrew
+
+homebrew_packages:
+  - neovim
+  - tmux
+  - zsh
+  - exa
+  - bat
+  - the_silver_searcher
+  - fzf
+  - ctags-exuberant
+
+homebrew_taps:
+  - homebrew/cask-fonts
+
+homebrew_cask_packages:
+  - font-meslo-lg-nerd-font
