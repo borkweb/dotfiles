@@ -1,0 +1,43 @@
+---
+- name: Configure dotfiles
+  hosts: local
+  gather_facts: true
+
+  pre_tasks:
+    - name: Detect WSL environment
+      set_fact:
+        is_wsl: "{{ lookup('file', '/proc/version', errors='ignore') | regex_search('microsoft|WSL', ignorecase=True) | bool }}"
+      tags: always
+
+    - name: Detect macOS
+      set_fact:
+        is_macos: "{{ ansible_os_family == 'Darwin' }}"
+      tags: always
+
+    - name: Display detected OS
+      debug:
+        msg: "Detected OS - macOS: {{ is_macos }}, WSL: {{ is_wsl }}"
+      tags: always
+
+  roles:
+    - role: common
+      tags: [common, always]
+
+    - role: shell
+      tags: [shell, packages, configs]
+
+    - role: tmux
+      tags: [tmux, configs]
+
+    - role: neovim
+      tags: [neovim, editor, configs]
+
+    - role: ideavim
+      tags: [ideavim, configs]
+
+    - role: bin-utils
+      tags: [bin-utils, utils]
+
+    - role: wordpress
+      tags: [wordpress]
+      when: wordpress_dev_path is defined and wordpress_dev_path != ""
