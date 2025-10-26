@@ -36,7 +36,7 @@
   become: true
   when: install_packages | bool
 
-- name: Install base packages (Debian/Ubuntu)
+- name: Install core packages (Debian/Ubuntu)
   apt:
     name:
       - git
@@ -45,15 +45,65 @@
       - tree
       - build-essential
       - gpg
-      - hub
-      - nodejs
-      - npm
       - ffmpeg
-      - libgd-dev
-      - libgdbm-dev
       - subversion
     state: present
   become: true
+  when: install_packages | bool
+
+- name: Install libgd-dev (Debian/Ubuntu)
+  apt:
+    name: libgd-dev
+    state: present
+  become: true
+  when: install_packages | bool
+  ignore_errors: true
+  register: libgd_result
+
+- name: Install libgdbm-dev (Debian/Ubuntu)
+  apt:
+    name: libgdbm-dev
+    state: present
+  become: true
+  when: install_packages | bool
+  ignore_errors: true
+  register: libgdbm_result
+
+- name: Display development libraries installation status
+  debug:
+    msg:
+      - "libgd-dev: {{ 'installed' if libgd_result is succeeded else 'skipped (version conflict with sury.org repository)' }}"
+      - "libgdbm-dev: {{ 'installed' if libgdbm_result is succeeded else 'skipped' }}"
+  when: install_packages | bool
+
+- name: Install Node.js packages (Debian/Ubuntu)
+  apt:
+    name:
+      - nodejs
+      - npm
+    state: present
+  become: true
+  when: install_packages | bool
+  ignore_errors: true
+  register: nodejs_result
+
+- name: Display Node.js installation status
+  debug:
+    msg: "Node.js installation {{ 'succeeded' if nodejs_result is succeeded else 'failed - may already be installed from NodeSource' }}"
+  when: install_packages | bool
+
+- name: Install hub (Debian/Ubuntu)
+  apt:
+    name: hub
+    state: present
+  become: true
+  when: install_packages | bool
+  ignore_errors: true
+  register: hub_result
+
+- name: Display hub installation status
+  debug:
+    msg: "Hub installation {{ 'succeeded' if hub_result is succeeded else 'failed - skipping' }}"
   when: install_packages | bool
 
 - name: Install bun (Debian/Ubuntu)
