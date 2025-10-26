@@ -51,31 +51,6 @@
   become: true
   when: install_packages | bool
 
-- name: Install libgd-dev (Debian/Ubuntu)
-  apt:
-    name: libgd-dev
-    state: present
-  become: true
-  when: install_packages | bool
-  ignore_errors: true
-  register: libgd_result
-
-- name: Install libgdbm-dev (Debian/Ubuntu)
-  apt:
-    name: libgdbm-dev
-    state: present
-  become: true
-  when: install_packages | bool
-  ignore_errors: true
-  register: libgdbm_result
-
-- name: Display development libraries installation status
-  debug:
-    msg:
-      - "libgd-dev: {{ 'installed' if libgd_result is succeeded else 'skipped (version conflict with sury.org repository)' }}"
-      - "libgdbm-dev: {{ 'installed' if libgdbm_result is succeeded else 'skipped' }}"
-  when: install_packages | bool
-
 - name: Install Node.js packages (Debian/Ubuntu)
   apt:
     name:
@@ -104,6 +79,62 @@
 - name: Display hub installation status
   debug:
     msg: "Hub installation {{ 'succeeded' if hub_result is succeeded else 'failed - skipping' }}"
+  when: install_packages | bool
+
+- name: Add 1Password GPG key (Debian/Ubuntu)
+  shell: curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --dearmor -o /usr/share/keyrings/1password-archive-keyring.gpg
+  args:
+    creates: /usr/share/keyrings/1password-archive-keyring.gpg
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
+- name: Add 1Password repository (Debian/Ubuntu)
+  copy:
+    content: "deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main\n"
+    dest: /etc/apt/sources.list.d/1password.list
+    mode: '0644'
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
+- name: Add 1Password repository policy (Debian/Ubuntu)
+  copy:
+    content: |
+      Package: *
+      Pin: origin downloads.1password.com
+      Pin-Priority: 1000
+    dest: /etc/apt/preferences.d/1password
+    mode: '0644'
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
+- name: Update apt cache for 1Password
+  apt:
+    update_cache: true
+    cache_valid_time: 0
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
+- name: Install 1Password CLI (Debian/Ubuntu)
+  apt:
+    name: 1password-cli
+    state: present
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+
+- name: Install Claude Code CLI
+  shell: curl -fsSL https://claude.ai/install.sh | bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/claude"
   when: install_packages | bool
 
 - name: Install bun (Debian/Ubuntu)

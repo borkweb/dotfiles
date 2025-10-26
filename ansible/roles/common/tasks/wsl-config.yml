@@ -26,6 +26,13 @@
       - "WSL Display: {{ wsl_display | default('N/A') }}"
   when: is_wsl | default(false)
 
+- name: Create XDG_RUNTIME_DIR in home for WSL
+  file:
+    path: "{{ ansible_env.HOME }}/.local/run"
+    state: directory
+    mode: '0700'
+  when: is_wsl | default(false)
+
 - name: Add WSL environment variables to zshrc
   blockinfile:
     path: "{{ ansible_env.HOME }}/.zshrc"
@@ -33,6 +40,11 @@
     block: |
       export HOST_IP={{ wsl_host_ip }}
       export DISPLAY={{ wsl_display }}
+
+      # Use home directory for XDG_RUNTIME_DIR in WSL (avoids /run permissions issues)
+      export XDG_RUNTIME_DIR="$HOME/.local/run"
+      mkdir -p "$XDG_RUNTIME_DIR"
+      chmod 700 "$XDG_RUNTIME_DIR"
   when:
     - is_wsl | default(false)
     - wsl_host_ip is defined

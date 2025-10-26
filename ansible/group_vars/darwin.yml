@@ -17,6 +17,7 @@ homebrew_packages:
   - gd
   - gdbm
   - subversion
+  - 1password-cli
 
 homebrew_taps:
   - homebrew/cask-fonts
