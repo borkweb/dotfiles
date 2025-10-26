@@ -22,6 +22,12 @@ This is a personal dotfiles repository containing shell configurations, editor s
 
 ### Directories
 
+- **`ansible/`**: Automated system configuration and package management
+  - `playbook.yml`: Main playbook orchestrating all roles
+  - `group_vars/`: Platform-specific variables (all.yml, darwin.yml, wsl.yml)
+  - `roles/`: Modular configuration roles (common, shell, tmux, git-repos, etc.)
+  - See Ansible Setup section below for details
+
 - **`ideavim/`**: IdeaVim configuration for IntelliJ-based IDEs
   - `.ideavimrc`: Main configuration file
   - Setup requires symlinking to home directory
@@ -51,8 +57,8 @@ The `.zshrc` includes two important git worktree helper functions:
 ### Key Aliases
 
 - `pbcopy`: Maps to `~/bin/clip.sh` for clipboard operations
-- `ls`: Aliased to `exa`
-- `cat`: Aliased to `bat`
+- `ls`: Aliased to `eza` (modern replacement for ls)
+- `cat`: Aliased to `bat` (syntax-highlighted cat)
 - `gsub`: `git submodule update --init --recursive --remote`
 - `gwl`: `git worktree list`
 
@@ -161,3 +167,80 @@ This configuration is optimized for:
 - `HOST_IP`: Auto-set for xdebug in WSL2 environments
 - `DISPLAY`: Set for WSL2 GUI applications
 - Editor: Set to `vim`
+
+## Ansible Setup
+
+The `ansible/` directory contains automated configuration for setting up development environments on both macOS and Debian/Ubuntu systems.
+
+### Running the Playbook
+
+```bash
+cd ansible
+ansible-playbook playbook.yml
+```
+
+**Run specific roles:**
+```bash
+ansible-playbook playbook.yml --tags shell,tmux
+ansible-playbook playbook.yml --tags git-repos
+```
+
+### Configuration Variables
+
+All user-customizable settings are in `ansible/group_vars/all.yml`:
+
+- **Directories**: Automatically creates `~/git`, `~/sites`, `~/.vim`, `~/bin`, etc.
+- **Git Repositories**: Define repos to clone into `~/git` (e.g., dotfiles-keys, bork-ai)
+- **Install Packages**: Set `install_packages: true/false` to control package installation
+
+### Ansible Roles
+
+**common**: Core packages and directory setup
+- Creates required directories (`~/git`, `~/sites`, `~/.vim`, `~/bin`)
+- Installs base utilities (git, curl, wget, tree, build-essential, ffmpeg, subversion)
+- Handles Python interpreter detection for apt module compatibility
+- Manages package conflicts gracefully (libgd-dev, nodejs, hub)
+
+**shell**: Shell configuration (zsh, oh-my-zsh, powerlevel10k)
+- Installs zsh and shell utilities (bat, ag, fzf, eza)
+- Sets up eza repository on Debian/Ubuntu
+- Symlinks `.zshrc` from repo
+- Sets zsh as default shell
+
+**tmux**: Terminal multiplexer setup
+- Installs tmux
+- Symlinks `.tmux.conf` from repo
+
+**git-repos**: Manages git repository clones
+- Clones repositories defined in `git_repositories` variable
+- Only clones if missing (preserves local changes)
+- Supports HTTPS and SSH URLs
+- See `ansible/roles/git-repos/README.md` for configuration details
+
+**ideavim**: IdeaVim configuration
+- Symlinks `.ideavimrc` for IntelliJ-based IDEs
+
+**bin-utils**: Utility scripts
+- Symlinks scripts from `bin/` to `~/bin`
+
+**wordpress**: WordPress development setup
+- Symlinks mu-plugins for local development
+
+### Platform-Specific Packages
+
+**macOS (Homebrew):**
+- CLI tools: hub, node, bun, curl, wget, ffmpeg, gd, gdbm, subversion
+- Applications: Postman, Spotify, Docker, iTerm2, Chrome, Firefox, TablePlus, Cursor, WordPress Studio
+
+**Debian/Ubuntu (apt):**
+- Same CLI tools via apt packages
+- bun installed via official installer script
+- eza installed via deb.gierens.de repository
+
+### Key Features
+
+- **Dynamic Python Detection**: Automatically detects system Python with apt support
+- **Bootstrap python3-apt**: Ensures apt module works in Conda/virtualenv environments
+- **Graceful Error Handling**: Continues playbook even if individual packages conflict
+- **Idempotent**: Safe to run multiple times without breaking existing setup
+- **Cross-Platform**: Works on both macOS (Homebrew) and Debian/Ubuntu (apt)
