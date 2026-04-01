@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# Credit to ThePrimeagen
+
+if [[ $# -eq 1 ]]; then
+    selected=$1
+else
+    items=$(find ~/projects -maxdepth 2 -mindepth 2 -type d)
+    items+=$'\n'
+    items+=$(find ~/projects -maxdepth 5 -mindepth 5 -path '*/.claude/worktrees/*' -type d 2>/dev/null)
+    items+=$'\n'
+    items+=$(find ~/git ~/sites -maxdepth 1 -mindepth 1 -type d)
+    items+=$'\n'
+    items+=$(find ~/git ~/sites -maxdepth 4 -mindepth 4 -path '*/.claude/worktrees/*' -type d 2>/dev/null)
+    items+=$'\n/tmp'
+    selected=`echo "$items" | fzf`
+fi
+
+if [[ $selected == '' ]]; then
+    exit
+fi
+
+if [[ "$selected" == */.claude/worktrees/* ]]; then
+    worktree_name=$(basename "$selected")
+    project_name=$(echo "$selected" | sed 's|/.claude/worktrees/.*||' | xargs basename)
+    dirname=$(echo "${project_name}-${worktree_name}" | sed 's/\./_/g')
+else
+    dirname=`basename "$selected" | sed 's/\./_/g'`
+fi
+
+if [[ -n "$TMUX" ]]; then
+    tmux switch-client -t ="$dirname" 2>/dev/null || \
+        (tmux new-session -c "$selected" -d -s "$dirname" && tmux switch-client -t "$dirname")
+else
+    tmux new-session -c "$selected" -A -s "$dirname"
+fi
