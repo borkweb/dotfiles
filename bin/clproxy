@@ -1,4 +1,0 @@
-#!/bin/bash
-
-claude-code-proxy serve                # listens on 127.0.0.1:18765
-PORT=11435 claude-code-proxy serve     # change the listen port
