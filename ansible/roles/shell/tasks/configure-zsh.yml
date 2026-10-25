@@ -6,6 +6,13 @@
     state: link
     force: true
 
+- name: Symlink starship prompt config
+  file:
+    src: "{{ repo_root }}/.config/starship.toml"
+    dest: "{{ ansible_env.HOME }}/.config/starship.toml"
+    state: link
+    force: true
+
 - name: Get zsh path
   command: which zsh
   register: zsh_path

@@ -1,0 +1,16 @@
+---
+# Loaded by playbook.yml on Debian/Ubuntu (including WSL2).
+package_manager: apt
+
+apt_packages:
+  - tmux
+  - zsh
+  - silversearcher-ag
+  - fzf
+  - fd-find
+  - zoxide
+  - neovim
+  - htop
+  - shellcheck
+  - hub
+# eza and starship are installed from upstream in the shell role

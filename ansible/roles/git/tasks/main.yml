@@ -1,0 +1,10 @@
+---
+# ~/.gitconfig itself lives in the private dotfiles-keys repo (it carries identity
+# and signing settings) and is linked by the private-dotfiles role.
+
+- name: Symlink global gitignore
+  file:
+    src: "{{ repo_root }}/.gitignore_global"
+    dest: "{{ ansible_env.HOME }}/.gitignore_global"
+    state: link
+    force: true

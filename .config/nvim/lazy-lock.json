@@ -1,0 +1,9 @@
+{
+  "agent-ask.nvim": { "branch": "main", "commit": "dff949ff3f9328c8a103424e9386da5b3d7b4349" },
+  "lazy.nvim": { "branch": "main", "commit": "306a05526ada86a7b30af95c5cc81ffba93fef97" },
+  "nerdtree": { "branch": "master", "commit": "690d061b591525890f1471c6675bcb5bdc8cdff9" },
+  "vim-airline": { "branch": "master", "commit": "1586662296c9dc946083e17cb6a4ef0b3e7c0d68" },
+  "vim-code-dark": { "branch": "master", "commit": "4624dc223bf574aa9a731c2383c579847303c380" },
+  "vim-fugitive": { "branch": "master", "commit": "3b753cf8c6a4dcde6edee8827d464ba9b8c4a6f0" },
+  "vim-polyglot": { "branch": "master", "commit": "f061eddb7cdcc614c8406847b2bfb53099832a4e" }
+}

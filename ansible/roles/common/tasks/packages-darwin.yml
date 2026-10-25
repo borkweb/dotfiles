@@ -22,12 +22,27 @@
     - install_packages | bool
     - not homebrew_installed
 
-- name: Install base packages (macOS)
+- name: Add Homebrew taps
+  homebrew_tap:
+    name: "{{ homebrew_taps }}"
+    state: present
+  when:
+    - install_packages | bool
+    - homebrew_taps is defined
+    - homebrew_taps | length > 0
+
+- name: Install Homebrew packages
   homebrew:
-    name:
-      - git
-      - curl
-      - wget
-      - tree
+    name: "{{ ['git', 'curl', 'wget', 'tree'] + (homebrew_packages | default([])) }}"
     state: present
   when: install_packages | bool
+
+- name: Install Homebrew casks
+  homebrew_cask:
+    name: "{{ homebrew_cask_packages }}"
+    state: present
+    accept_external_apps: true
+  when:
+    - install_packages | bool
+    - homebrew_cask_packages is defined
+    - homebrew_cask_packages | length > 0

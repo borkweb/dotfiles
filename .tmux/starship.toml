@@ -1,0 +1,25 @@
+# Example: Basic left status with session name and prefix highlighting
+# Place this at ~/.tmux/starship.toml or use TMUX_SHIP_LEFT_CONFIG
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Left status: session name (with prefix highlighting) + current directory
+format = "$custom"
+right_format = ""
+add_newline = false
+
+# Show session name with highlight when prefix key is pressed
+[custom.prefix_active]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" = "1"'
+command = 'printf "%s " "${TMUX_SESSION_NAME:-?}"'
+format = "[$output]($style) "
+style = "bg:#95E6CB bold"
+
+# Show session name normally when prefix key is not pressed
+[custom.session_normal]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" != "1"'
+command = 'printf "%s" "${TMUX_SESSION_NAME:-?}"'
+format = "[$output]($style) "
+style = "fg:#565B66"

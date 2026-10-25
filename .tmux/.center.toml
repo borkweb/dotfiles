@@ -1,0 +1,31 @@
+# Example: Center/window status with active window highlighting
+# Place this at ~/.tmux/.center.toml or use TMUX_SHIP_CENTER_CONFIG
+# This is called for each window in the window-status-format
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = "$custom"
+add_newline = false
+
+# Active window styling
+[custom.window_active]
+shell = "bash"
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1"'
+command = 'printf "%s:%s" "${TMUX_WINDOW_INDEX:-?}" "${TMUX_WINDOW_NAME:-?}"'
+format = "[$output]($style)"
+style = "bg:#313244 fg:#CDD6F4 bold"
+
+# Inactive window styling
+[custom.window_inactive]
+shell = "bash"
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" != "1"'
+command = 'printf "%s:%s" "${TMUX_WINDOW_INDEX:-?}" "${TMUX_WINDOW_NAME:-?}"'
+format = "[$output]($style)"
+style = "fg:#6C7086"
+
+# Show zoom indicator for active window
+[custom.zoom_indicator]
+shell = "bash"
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1" && test "${TMUX_WINDOW_ZOOMED_FLAG:-0}" = "1"'
+command = 'printf "🔍"'
+format = " $output"

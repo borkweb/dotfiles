@@ -1,0 +1,28 @@
+# Example: Right status with time, host, and window info
+# Place this at ~/.tmux/.right.toml or use TMUX_SHIP_RIGHT_CONFIG
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = "$time$custom"
+add_newline = false
+
+# Clock
+[time]
+disabled = false
+format = "[$time]($style) "
+style = "fg:#89B4FA"
+time_format = "%I:%M:%S %p"
+
+# Host information
+[custom.host]
+shell = "bash"
+command = 'printf "%s" "${TMUX_HOST_SHORT:-$(hostname -s)}"'
+format = "on [$output]($style) "
+style = "fg:#A6E3A1"
+
+# Window count
+[custom.window_count]
+shell = "bash"
+command = 'printf "%s" "${TMUX_SESSION_WINDOWS:-?}"'
+format = "[󰖲 $output]($style)"
+style = "fg:#CBA6F7"

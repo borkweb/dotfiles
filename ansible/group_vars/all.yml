@@ -1,6 +1,6 @@
 ---
 # User-customizable settings
-wordpress_dev_path: "{{ ansible_env.HOME }}/wordpress-dev"
+wordpress_dev_path: ""            # e.g. "{{ ansible_env.HOME }}/wordpress-dev" to symlink mu-plugins; "" skips the role
 install_packages: true
 default_shell: /bin/zsh
 
@@ -8,17 +8,21 @@ default_shell: /bin/zsh
 repo_root: "{{ playbook_dir | dirname }}"
 dotfiles_dir: "{{ playbook_dir }}"
 bin_dir: "{{ ansible_env.HOME }}/bin"
-vim_dir: "{{ ansible_env.HOME }}/.vim"
 git_dir: "{{ ansible_env.HOME }}/git"
 sites_dir: "{{ ansible_env.HOME }}/sites"
+projects_dir: "{{ ansible_env.HOME }}/projects"
+
+# Language runtimes installed with their official scripts (see roles/common/tasks/runtimes.yml)
+nvm_version: v0.40.3
+node_default_version: "24"
 
 # Git repositories to clone into ~/git
 git_repositories:
   - repo: git@github.com:borkweb/dotfiles-keys.git
     dest: dotfiles-keys
 
-  - repo: git@github.com:borkweb/bork-ai.git
-    dest: bork-ai
+  - repo: git@github.com:borkweb/skills.git
+    dest: skills
 
 # Oh-my-zsh configuration
 oh_my_zsh_dir: "{{ ansible_env.HOME }}/.oh-my-zsh"

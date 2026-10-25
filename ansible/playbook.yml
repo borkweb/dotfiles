@@ -14,6 +14,16 @@
         is_macos: "{{ ansible_os_family == 'Darwin' }}"
       tags: always
 
+    - name: Load macOS variables
+      include_vars: "{{ playbook_dir }}/group_vars/darwin.yml"
+      when: is_macos
+      tags: always
+
+    - name: Load Debian/Ubuntu variables
+      include_vars: "{{ playbook_dir }}/group_vars/debian.yml"
+      when: ansible_os_family == "Debian"
+      tags: always
+
     - name: Display detected OS
       debug:
         msg: "Detected OS - macOS: {{ is_macos }}, WSL: {{ is_wsl }}"
@@ -29,14 +39,27 @@
     - role: tmux
       tags: [tmux, configs]
 
-    - role: ideavim
-      tags: [ideavim, configs]
+    - role: editors
+      tags: [editors, configs]
+
+    - role: git
+      tags: [git, configs]
 
     - role: bin-utils
       tags: [bin-utils, utils]
 
+    - role: claude-code
+      tags: [claude-code, configs]
+
+    - role: macos
+      tags: [macos, configs]
+      when: is_macos
+
     - role: git-repos
       tags: [git-repos, repos]
+
+    - role: private-dotfiles
+      tags: [private, configs]
 
     - role: wordpress
       tags: [wordpress]

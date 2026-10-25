@@ -1,0 +1,68 @@
+---
+# Neovim is the daily editor (vi/vim are aliased to nvim in .zshrc); plain vim
+# still gets a .vimrc because git and other tools invoke it directly.
+
+- name: Install neovim (Debian/Ubuntu)
+  apt:
+    name: neovim
+    state: present
+  become: true
+  when:
+    - install_packages | bool
+    - ansible_os_family == "Debian"
+  tags: packages
+
+- name: Symlink .vimrc
+  file:
+    src: "{{ repo_root }}/.vimrc"
+    dest: "{{ ansible_env.HOME }}/.vimrc"
+    state: link
+    force: true
+
+- name: Ensure vim bundle directory exists
+  file:
+    path: "{{ vim_bundle_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Clone Vundle
+  git:
+    repo: "{{ vundle_repo }}"
+    dest: "{{ vim_bundle_dir }}/Vundle.vim"
+    update: false
+
+- name: Check existing neovim config
+  stat:
+    path: "{{ nvim_config_dir }}"
+  register: nvim_dir
+
+- name: Back up an unmanaged neovim config directory
+  command: mv "{{ nvim_config_dir }}" "{{ nvim_config_dir }}.bak.{{ ansible_date_time.epoch }}"
+  when:
+    - not ansible_check_mode
+    - nvim_dir.stat.exists
+    - nvim_dir.stat.isdir
+    - not nvim_dir.stat.islnk
+
+- name: Report what a real run would do to the neovim config directory
+  debug:
+    msg: "Would move {{ nvim_config_dir }} to {{ nvim_config_dir }}.bak.<epoch> and replace it with a symlink into the repo"
+  when:
+    - ansible_check_mode
+    - nvim_dir.stat.exists
+    - nvim_dir.stat.isdir
+    - not nvim_dir.stat.islnk
+
+- name: Symlink neovim config directory
+  file:
+    src: "{{ repo_root }}/.config/nvim"
+    dest: "{{ nvim_config_dir }}"
+    state: link
+    force: true
+  when: not (ansible_check_mode and nvim_dir.stat.exists and nvim_dir.stat.isdir and not nvim_dir.stat.islnk)
+
+- name: Install neovim plugins from lazy-lock.json
+  command: nvim --headless "+Lazy! restore" +qa
+  changed_when: false
+  failed_when: false
+  when: install_packages | bool

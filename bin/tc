@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+# tmux + claude launcher
+# Usage: tc <project-name>
+# Finds a project directory by name, opens/attaches a tmux session,
+# and starts Claude Code in a new window.
+
+if [[ $# -lt 1 ]]; then
+    echo "Usage: tc <project-name>"
+    echo "Searches ~/projects, ~/git, ~/sites for a matching directory"
+    echo "and starts a tmux session with Claude Code."
+    exit 1
+fi
+
+query="$1"
+
+# Search the same directories as ~/bin/t
+candidates=()
+while IFS= read -r dir; do
+    [[ -n "$dir" ]] && candidates+=("$dir")
+done < <(
+    find ~/projects -maxdepth 2 -mindepth 2 -type d 2>/dev/null
+    find ~/git ~/sites -maxdepth 1 -mindepth 1 -type d 2>/dev/null
+)
+
+# Find a match (exact basename match first, then substring)
+selected=""
+for dir in "${candidates[@]}"; do
+    if [[ "$(basename "$dir")" == "$query" ]]; then
+        selected="$dir"
+        break
+    fi
+done
+
+# Fall back to substring match if no exact match
+if [[ -z "$selected" ]]; then
+    for dir in "${candidates[@]}"; do
+        if [[ "$(basename "$dir")" == *"$query"* ]]; then
+            selected="$dir"
+            break
+        fi
+    done
+fi
+
+# Fall back to case-insensitive substring match
+if [[ -z "$selected" ]]; then
+    query_lower=$(echo "$query" | tr '[:upper:]' '[:lower:]')
+    for dir in "${candidates[@]}"; do
+        base_lower=$(basename "$dir" | tr '[:upper:]' '[:lower:]')
+        if [[ "$base_lower" == *"$query_lower"* ]]; then
+            selected="$dir"
+            break
+        fi
+    done
+fi
+
+if [[ -z "$selected" ]]; then
+    echo "No project found matching: $query"
+    echo ""
+    echo "Available projects:"
+    for dir in "${candidates[@]}"; do
+        echo "  $(basename "$dir")"
+    done | sort
+    exit 1
+fi
+
+echo "Found project: $selected"
+
+dirname=$(basename "$selected" | sed 's/\./_/g')
+
+# Create the tmux session if it doesn't exist (always detached first)
+if ! tmux has-session -t="$dirname" 2>/dev/null; then
+    tmux new-session -c "$selected" -d -s "$dirname"
+fi
+
+# Open a new window for Claude and start it (before attaching, since attach blocks)
+tmux new-window -t "$dirname" -c "$selected" -n "claude"
+tmux send-keys -t "$dirname:claude" "claude" Enter
+
+# Now attach or switch
+if [[ -n "$TMUX" ]]; then
+    tmux switch-client -t "$dirname"
+else
+    tmux attach-session -t "$dirname"
+fi

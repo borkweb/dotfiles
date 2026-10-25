@@ -1,0 +1,13 @@
+# Ghostty configuration — https://ghostty.org/docs/config
+#
+# macOS reads this from:
+#   ~/Library/Application Support/com.mitchellh.ghostty/config
+# Linux reads it from:
+#   ~/.config/ghostty/config
+#
+# Only options that differ from Ghostty's defaults are set here.
+
+# Send Alt+k (M-k) to tmux when Cmd+K is pressed.
+# Overrides Ghostty's default Cmd+K = clear_screen so tmux's M-k binding
+# (agent-ask.nvim split) actually fires.
+keybind = cmd+k=text:\x1bk

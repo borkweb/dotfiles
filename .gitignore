@@ -1,10 +1,9 @@
 .idea
-.vim/pack
-.vim/plugged
-.vim/.netrwhist
+.DS_Store
 
-id_rsa
-id_rsa.pub
+# Karabiner-Elements writes these next to karabiner.json
+.config/karabiner/automatic_backups/
+.config/karabiner/assets/
 
 # Ansible
 *.retry

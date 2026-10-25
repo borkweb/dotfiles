@@ -1,0 +1,22 @@
+---
+# Files that live in the private dotfiles-keys repo. Each is linked into place
+# only when it exists there (vaulted files must be decrypted first: ./vault.sh decrypt).
+private_dotfiles_dir: "{{ git_dir }}/dotfiles-keys"
+
+private_dotfiles:
+  - src: .gitconfig
+    dest: "{{ ansible_env.HOME }}/.gitconfig"
+  - src: .gitconfig-a8c
+    dest: "{{ ansible_env.HOME }}/.gitconfig-a8c"
+  - src: .zshrc-secrets
+    dest: "{{ ansible_env.HOME }}/.zshrc-secrets"
+  - src: .zshrc-local
+    dest: "{{ ansible_env.HOME }}/.zshrc-local"
+  - src: .proxychains.conf
+    dest: "{{ ansible_env.HOME }}/.proxychains.conf"
+  - src: ssh/config
+    dest: "{{ ansible_env.HOME }}/.ssh/config"
+  - src: claude/CLAUDE.md
+    dest: "{{ ansible_env.HOME }}/.claude/CLAUDE.md"
+  - src: claude/settings.json
+    dest: "{{ ansible_env.HOME }}/.claude/settings.json"

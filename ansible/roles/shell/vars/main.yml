@@ -1,29 +1,7 @@
 ---
 oh_my_zsh_install_script: "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
-powerlevel10k_repo: "https://github.com/romkatv/powerlevel10k.git"
-powerlevel10k_dest: "{{ oh_my_zsh_custom }}/themes/powerlevel10k"
+starship_install_script: "https://starship.rs/install.sh"
 
+# oh-my-zsh plugins enabled in .zshrc (the prompt itself is Starship, so ZSH_THEME is empty)
 zsh_plugins:
   - git
-  - ag
-  - z
-
-debian_packages:
-  - zsh
-  - bat
-  - silversearcher-ag
-  - fzf
-
-# eza is not in standard repos, installed separately
-debian_packages_from_repos:
-  - zsh
-  - bat
-  - silversearcher-ag
-  - fzf
-
-darwin_packages:
-  - zsh
-  - eza
-  - bat
-  - the_silver_searcher
-  - fzf

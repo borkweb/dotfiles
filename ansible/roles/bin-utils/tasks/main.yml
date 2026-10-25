@@ -19,12 +19,16 @@
     state: link
     force: true
   loop: "{{ bin_scripts.files }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
 
 - name: Make bin scripts executable
   file:
     path: "{{ bin_scripts_dest }}/{{ item.path | basename }}"
     mode: "0755"
   loop: "{{ bin_scripts.files }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
 
 - name: Verify bin directory in PATH
   shell: echo $PATH | grep -q "{{ bin_scripts_dest }}"

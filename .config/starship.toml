@@ -1,0 +1,117 @@
+# Starship config — migrated from Powerlevel10k
+# Style: 2-line, powerline classic, dark background, transient prompt
+
+# General
+format = """
+[╭─](238)$directory$git_branch$git_status$fill$status$cmd_duration$jobs$nodejs$python$time
+[╰─](238)$character"""
+
+# Right-side fill
+[fill]
+symbol = '·'
+style = '238'
+
+# Prompt character
+[character]
+success_symbol = '[❯](bold green)'
+error_symbol = '[❯](bold red)'
+
+# Directory
+[directory]
+style = 'bold cyan'
+truncation_length = 5
+truncate_to_repo = true
+format = '[$path]($style)[$read_only]($read_only_style) '
+read_only = ' 󰌾'
+
+# Git branch
+[git_branch]
+style = '76'
+format = '[on ](244)[$branch]($style) '
+
+# Git status
+[git_status]
+style = 'bold 178'
+format = '([$all_status$ahead_behind]($style) )'
+conflicted = '=${count}'
+ahead = '⇡${count}'
+behind = '⇣${count}'
+diverged = '⇡${ahead_count}⇣${behind_count}'
+untracked = '?${count}'
+stashed = '*${count}'
+modified = '!${count}'
+staged = '+${count}'
+renamed = '»${count}'
+deleted = '✘${count}'
+
+# Command duration — matches P10k 3-second threshold
+[cmd_duration]
+min_time = 3_000
+style = '248'
+format = '[took ](244)[$duration]($style) '
+
+# Exit status
+[status]
+disabled = false
+style = 'bold red'
+symbol = '✘ '
+success_symbol = ''
+format = '[$symbol$status]($style) '
+
+# Background jobs
+[jobs]
+style = 'bold cyan'
+symbol = '⚙'
+format = '[$symbol$number]($style) '
+
+# Node.js (via nvm)
+[nodejs]
+style = 'bold green'
+format = '[$symbol($version)]($style) '
+detect_files = ['package.json', '.node-version', '.nvmrc']
+
+# Python virtualenv
+[python]
+style = 'bold yellow'
+format = '[$symbol$virtualenv]($style) '
+
+# Time — 12-hour format matching P10k
+[time]
+disabled = false
+style = '248'
+format = '[$time]($style) '
+time_format = '%I:%M:%S %p'
+
+# Disabled modules (were commented out in P10k)
+[golang]
+disabled = true
+
+[rust]
+disabled = true
+
+[php]
+disabled = true
+
+[java]
+disabled = true
+
+[ruby]
+disabled = true
+
+[package]
+disabled = true
+
+[docker_context]
+disabled = true
+
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[kubernetes]
+disabled = true
+
+[terraform]
+disabled = true

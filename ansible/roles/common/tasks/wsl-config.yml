@@ -33,9 +33,11 @@
     mode: '0700'
   when: is_wsl | default(false)
 
-- name: Add WSL environment variables to zshrc
+- name: Add WSL environment variables to ~/.zshrc-local (sourced by .zshrc)
   blockinfile:
-    path: "{{ ansible_env.HOME }}/.zshrc"
+    path: "{{ ansible_env.HOME }}/.zshrc-local"
+    create: true
+    mode: "0644"
     marker: "# {mark} ANSIBLE MANAGED WSL CONFIG"
     block: |
       export HOST_IP={{ wsl_host_ip }}

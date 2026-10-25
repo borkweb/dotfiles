@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Start or restart the Guild Hall dev server in the background.
+#   guild            restart (or start)
+#   guild stop       stop it
+#   guild status     show whether it is running
+#   guild logs       follow the log
+# Extra arguments after "start"/"restart" go to the Hall, e.g. guild restart --port 4399
+set -u
+REPO="$HOME/projects/personal/bork-guild"
+STATE="$HOME/.local/state/guild"
+PID="$STATE/dev.pid"
+LOG="$STATE/dev.log"
+mkdir -p "$STATE"
+
+running() { [ -f "$PID" ] && kill -0 "$(cat "$PID")" 2>/dev/null; }
+
+stop() {
+  local pids
+  # The pidfile process plus any Hall left over from a hand-started run.
+  pids="$(cat "$PID" 2>/dev/null) $(pgrep -f 'build/bin/guild-hall.mjs --dev' | tr '\n' ' ')"
+  # shellcheck disable=SC2086
+  kill $pids 2>/dev/null
+  for _ in $(seq 1 50); do
+    # shellcheck disable=SC2086
+    kill -0 $pids 2>/dev/null || break
+    sleep 0.2
+  done
+  # shellcheck disable=SC2086
+  kill -9 $pids 2>/dev/null
+  rm -f "$PID"
+}
+
+start() {
+  cd "$REPO" || exit 1
+  : > "$LOG"
+  nohup npm run dev -- "$@" >> "$LOG" 2>&1 < /dev/null &
+  echo $! > "$PID"
+  disown
+  echo "guild starting (pid $(cat "$PID")); logs: guild logs"
+}
+
+cmd="${1:-restart}"
+[ $# -gt 0 ] && shift
+case "$cmd" in
+  start|restart) stop; start "$@" ;;
+  stop) stop; echo "guild stopped" ;;
+  status) if running; then echo "guild running (pid $(cat "$PID"))"; else echo "guild not running"; fi ;;
+  logs) exec tail -n 50 -f "$LOG" ;;
+  *) echo "usage: guild [start|restart|stop|status|logs]" >&2; exit 2 ;;
+esac

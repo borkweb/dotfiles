@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# tc-handler: Watches for ~/.tc-trigger and runs ~/bin/tc with the contents.
+# Used by the com.borkweb.tc-handler launchd agent.
+
+TRIGGER_FILE="$HOME/bin/.tc-trigger"
+
+if [[ ! -f "$TRIGGER_FILE" ]]; then
+    exit 0
+fi
+
+project_name=$(cat "$TRIGGER_FILE")
+rm -f "$TRIGGER_FILE"
+
+if [[ -z "$project_name" ]]; then
+    exit 0
+fi
+
+# Run tc with the project name
+# tc needs a real terminal, so use osascript to open Terminal and run it
+osascript -e "
+tell application \"Terminal\"
+    activate
+    do script \"$HOME/bin/tc ${project_name}\"
+end tell
+"

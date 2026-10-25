@@ -1,0 +1,22 @@
+---
+# Version managers installed with their official scripts; identical on macOS and Linux.
+# .zshrc already wires them into the shell, so the installers are told not to edit it.
+
+- name: Install nvm
+  shell: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/{{ nvm_version }}/install.sh | PROFILE=/dev/null bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+  when: install_packages | bool
+
+- name: Install default Node.js via nvm
+  shell: . "{{ ansible_env.HOME }}/.nvm/nvm.sh" && nvm install {{ node_default_version }} && nvm alias default {{ node_default_version }}
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_env.HOME }}/.nvm/alias/default"
+  when: install_packages | bool
+
+- name: Install bun
+  shell: curl -fsSL https://bun.sh/install | bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.bun/bin/bun"
+  when: install_packages | bool

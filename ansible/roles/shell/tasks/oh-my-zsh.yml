@@ -23,15 +23,3 @@
   file:
     path: /tmp/install-oh-my-zsh.sh
     state: absent
-
-- name: Check if powerlevel10k is installed
-  stat:
-    path: "{{ powerlevel10k_dest }}"
-  register: p10k_stat
-
-- name: Clone powerlevel10k theme
-  git:
-    repo: "{{ powerlevel10k_repo }}"
-    dest: "{{ powerlevel10k_dest }}"
-    depth: 1
-  when: not p10k_stat.stat.exists

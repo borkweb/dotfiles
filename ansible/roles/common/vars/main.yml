@@ -1,9 +1,8 @@
 ---
 required_directories:
-  - "{{ vim_dir }}"
-  - "{{ vim_dir }}/pack"
-  - "{{ vim_dir }}/core"
   - "{{ bin_dir }}"
   - "{{ ansible_env.HOME }}/.config"
+  - "{{ ansible_env.HOME }}/.tmux"
   - "{{ git_dir }}"
   - "{{ sites_dir }}"
+  - "{{ projects_dir }}"

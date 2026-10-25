@@ -1,12 +1,6 @@
 ---
-- name: Install shell packages (Debian/Ubuntu)
-  apt:
-    name: "{{ debian_packages }}"
-    state: present
-  become: true
-  when:
-    - install_packages | bool
-    - ansible_os_family == "Debian"
+# On macOS these all come from Homebrew (group_vars/darwin.yml). Debian/Ubuntu
+# needs the upstream eza repository and the starship installer.
 
 - name: Create apt keyrings directory
   file:
@@ -14,36 +8,28 @@
     state: directory
     mode: '0755'
   become: true
-  when:
-    - install_packages | bool
-    - ansible_os_family == "Debian"
+  when: install_packages | bool
 
 - name: Download eza GPG key
   get_url:
     url: https://raw.githubusercontent.com/eza-community/eza/main/deb.asc
     dest: /tmp/eza.asc
     mode: '0644'
-  when:
-    - install_packages | bool
-    - ansible_os_family == "Debian"
+  when: install_packages | bool
 
 - name: Convert and install eza GPG key
   shell: gpg --dearmor < /tmp/eza.asc > /etc/apt/keyrings/gierens.gpg
   args:
     creates: /etc/apt/keyrings/gierens.gpg
   become: true
-  when:
-    - install_packages | bool
-    - ansible_os_family == "Debian"
+  when: install_packages | bool
 
 - name: Set permissions on eza GPG key
   file:
     path: /etc/apt/keyrings/gierens.gpg
     mode: '0644'
   become: true
-  when:
-    - install_packages | bool
-    - ansible_os_family == "Debian"
+  when: install_packages | bool
 
 - name: Add eza repository
   copy:
@@ -51,40 +37,31 @@
     dest: /etc/apt/sources.list.d/gierens.list
     mode: '0644'
   become: true
-  when:
-    - install_packages | bool
-    - ansible_os_family == "Debian"
+  when: install_packages | bool
 
 - name: Remove temporary GPG key file
   file:
     path: /tmp/eza.asc
     state: absent
-  when:
-    - install_packages | bool
-    - ansible_os_family == "Debian"
+  when: install_packages | bool
 
 - name: Update apt cache for eza repository
   apt:
     update_cache: true
     cache_valid_time: 0
   become: true
-  when:
-    - install_packages | bool
-    - ansible_os_family == "Debian"
+  when: install_packages | bool
 
 - name: Install eza (Debian/Ubuntu)
   apt:
     name: eza
     state: present
   become: true
-  when:
-    - install_packages | bool
-    - ansible_os_family == "Debian"
+  when: install_packages | bool
 
-- name: Install shell packages (macOS)
-  homebrew:
-    name: "{{ darwin_packages }}"
-    state: present
-  when:
-    - install_packages | bool
-    - is_macos | default(false)
+- name: Install starship (Debian/Ubuntu)
+  shell: curl -sS {{ starship_install_script }} | sh -s -- --yes
+  args:
+    creates: /usr/local/bin/starship
+  become: true
+  when: install_packages | bool

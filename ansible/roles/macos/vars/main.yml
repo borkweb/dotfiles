@@ -1,0 +1,5 @@
+---
+ghostty_config_dir: "{{ ansible_env.HOME }}/Library/Application Support/com.mitchellh.ghostty"
+karabiner_config_dir: "{{ ansible_env.HOME }}/.config/karabiner"
+launch_agents_dir: "{{ ansible_env.HOME }}/Library/LaunchAgents"
+tc_handler_plist: "{{ launch_agents_dir }}/com.borkweb.tc-handler.plist"

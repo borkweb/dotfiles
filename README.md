@@ -1,76 +1,103 @@
 # dotfiles
-My current dotfiles
 
-## Quick Start (Ansible)
+My development environment, reproducible with Ansible. Primary platform is macOS
+(Apple Silicon); Debian/Ubuntu and WSL2 are still supported.
 
-### Fresh Machine Setup
+Anything personal, work-specific or secret lives in a separate private repo,
+[dotfiles-keys](https://github.com/borkweb/dotfiles-keys), and is linked in by the
+`private-dotfiles` role. See [Private configuration](#private-configuration).
 
-If you're setting up a completely fresh machine without Ansible installed, use the bootstrap script:
+## What's in here
+
+| Area | Files | Notes |
+|------|-------|-------|
+| Shell | `.zshrc` | zsh + oh-my-zsh (`git` plugin only), prompt by [Starship](https://starship.rs). Sources `~/.zshrc-local` and `~/.zshrc-secrets` if present. |
+| Prompt | `.config/starship.toml` | Two-line prompt migrated from Powerlevel10k. |
+| tmux | `.tmux.conf`, `.tmux/*.toml` | Prefix `C-Space`. Status bar rendered by [tmuxship](https://github.com/Yukaii/tmuxship) using the Starship configs in `.tmux/`. |
+| Terminal | `.config/ghostty/config` | Ghostty; only change is `Cmd+K` → `M-k` so the tmux agent-ask binding fires. |
+| Editors | `.config/nvim/`, `.vimrc` | Neovim with [lazy.nvim](https://github.com/folke/lazy.nvim) (lockfile committed). `.vimrc` mirrors it with Vundle for plain vim, which git still invokes. |
+| Keyboard | `.config/karabiner/karabiner.json` | Caps Lock as Hyper/Escape, Hyper+C opens Claude Desktop, Alphabork characters. |
+| Git | `.gitignore_global` | Global ignores. `.gitconfig` itself is private (identity + signing). |
+| Scripts | `bin/` | See [bin scripts](#bin-scripts). |
+| Claude Code | `.config/cship.toml` | [cship](https://cship.dev) statusline config. `settings.json` and `CLAUDE.md` are private. |
+| launchd | `launchd/` | `com.borkweb.tc-handler` watches `~/bin/.tc-trigger` and opens a tmux + Claude session. |
+| WordPress | `wordpress/mu-plugins/` | Local-dev must-use plugins (SSL bypass, Mailhog mailer, plugin dir names). Opt in with `wordpress_dev_path`. |
+
+### bin scripts
+
+| Script | Purpose |
+|--------|---------|
+| `t` | fzf picker over `~/projects`, `~/git`, `~/sites` (and Claude worktrees) that opens or switches to a tmux session. |
+| `tc` / `tc-handler` | `tc <project>` opens a tmux session with a `claude` window; `tc-handler` is the launchd side of the URL handler. |
+| `git-worktree-add` / `git-worktree-remove` | Create or remove a sibling worktree (`../repo-branch`). |
+| `cpt` / `clproxy` | Helpers for [claude-code-proxy](https://github.com/raine/claude-code-proxy): `clproxy` starts the proxy, `cpt` toggles the `~/.claude/claude-code-proxy-enabled` flag. |
+| `guild` | Start, stop, or tail the Guild Hall dev server. |
+| `jetpack-build-zip` | Build an installable plugin zip from the Jetpack monorepo. |
+| `playground` | `npx @wp-now/wp-now start`. |
+| `gentags` | ctags for PHP/JS projects. |
+| `scan-shai-hulud.sh` / `tanstack-worm-cleaner.sh` | IOC scanner and cleaner for the 2026 "Mini Shai-Hulud" npm supply-chain campaign. |
+
+## Quick start
+
+Fresh machine (installs Command Line Tools / Homebrew / apt prerequisites, then Ansible, then runs the playbook):
 
 ```bash
-git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
-cd ~/dotfiles
+git clone https://github.com/borkweb/dotfiles.git ~/git/dotfiles
+cd ~/git/dotfiles
 ./setup.sh
 ```
 
-The script will automatically detect your OS and run the appropriate setup. It will install:
-- Command Line Tools (macOS only)
-- Homebrew (macOS) or required apt packages (Ubuntu)
-- Ansible
-- Git and other prerequisites
-
-**Platform-specific scripts** (if you prefer):
-- macOS: `./setup-mac.sh`
-- Ubuntu/Debian/WSL2: `./setup-ubuntu.sh`
-
-After the bootstrap script completes, proceed with the installation steps below.
-
-### Prerequisites
-
-- Ansible 2.9 or higher
-- Git
-- sudo access (for package installation)
-
-### Installation
-
-1. Clone this repository (skip if you already ran a bootstrap script):
-   ```bash
-   git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
-   cd ~/dotfiles
-   ```
-
-2. Run the Ansible playbook:
-   ```bash
-   cd ansible
-   ansible-playbook playbook.yml
-   ```
-
-3. For WSL users: Manually create Windows symlink for IdeaVim (see output for command)
-
-### Selective Installation
-
-Install only specific components using tags:
+Already have Ansible:
 
 ```bash
-# Only shell configuration
-cd ansible && ansible-playbook playbook.yml --tags shell
-
-# Shell and tmux
-cd ansible && ansible-playbook playbook.yml --tags shell,tmux
-
-# Everything except WordPress
-cd ansible && ansible-playbook playbook.yml --skip-tags wordpress
-
-# Config files only (no packages)
-cd ansible && ansible-playbook playbook.yml --skip-tags packages
+cd ~/git/dotfiles/ansible
+ansible-playbook playbook.yml
 ```
 
-### Customization
+Requires the `community.general` and `ansible.posix` collections (`ansible-galaxy collection install community.general ansible.posix`).
 
-Edit variables in `group_vars/all.yml`:
+### Selective runs
 
-```yaml
-wordpress_dev_path: "{{ ansible_env.HOME }}/wordpress-dev"  # Or "" to skip
-install_packages: true           # Set false for config-only
-default_shell: /bin/zsh
+```bash
+ansible-playbook playbook.yml --tags shell,tmux          # just those roles
+ansible-playbook playbook.yml --tags configs             # symlinks only, no installs
+ansible-playbook playbook.yml --skip-tags packages       # everything except package installs
+ansible-playbook playbook.yml -e install_packages=false  # same, via variable
+./test-playbook.sh                                       # syntax check + dry run
 ```
+
+### Roles
+
+| Role | Tags | Does |
+|------|------|------|
+| `common` | `common` | Directories, Homebrew taps/formulae/casks (macOS) or apt packages (Debian), nvm + Node, bun, WSL env. |
+| `shell` | `shell` | oh-my-zsh, Starship (upstream installer on Debian), links `.zshrc` and `starship.toml`, sets zsh as login shell. |
+| `tmux` | `tmux` | Links `.tmux.conf` and `.tmux/*.toml`, installs tmuxship with cargo when rust is present. |
+| `editors` | `editors` | Links `.vimrc` and `~/.config/nvim`, clones Vundle, restores neovim plugins from the lockfile. |
+| `git` | `git` | Links `.gitignore_global`. |
+| `bin-utils` | `bin-utils` | Links everything in `bin/` into `~/bin`. |
+| `claude-code` | `claude-code` | Installs Claude Code, links `cship.toml`. |
+| `macos` | `macos` | Ghostty config, Karabiner config, tc-handler launch agent. macOS only. |
+| `git-repos` | `git-repos` | Clones the repos in `git_repositories` into `~/git` if missing. |
+| `private-dotfiles` | `private` | Links files from `~/git/dotfiles-keys` into place when they exist. |
+| `wordpress` | `wordpress` | Links mu-plugins into `wordpress_dev_path`. Skipped unless set. |
+
+Package lists live in `ansible/group_vars/darwin.yml` (Homebrew) and `ansible/group_vars/debian.yml` (apt); other knobs are in `ansible/group_vars/all.yml`.
+
+## Private configuration
+
+`.zshrc` deliberately ends by sourcing two files that are not in this repo:
+
+- `~/.zshrc-local` for machine- or employer-specific config (aliases, env vars, proxies)
+- `~/.zshrc-secrets` for API keys and tokens
+
+Those, plus `~/.gitconfig`, `~/.ssh/config`, Claude Code's `settings.json` and `CLAUDE.md`,
+and work-only scripts, are kept in the private `dotfiles-keys` repo. Secrets there are
+encrypted with `ansible-vault`; its `vault.sh` handles import, encrypt and decrypt. The
+`private-dotfiles` role symlinks whatever has been decrypted and tells you what hasn't.
+
+## Not automated
+
+- `cship` (Claude Code statusline): install from https://cship.dev.
+- Vundle plugins for plain vim: run `vim +PluginInstall +qall` once.
+- Karabiner-Elements and Ghostty are installed as casks but need to be launched once to grant permissions.

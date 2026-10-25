@@ -51,35 +51,15 @@
   become: true
   when: install_packages | bool
 
-- name: Install Node.js packages (Debian/Ubuntu)
+- name: Install CLI packages (Debian/Ubuntu)
   apt:
-    name:
-      - nodejs
-      - npm
+    name: "{{ apt_packages | default([]) }}"
     state: present
   become: true
-  when: install_packages | bool
-  ignore_errors: true
-  register: nodejs_result
-
-- name: Display Node.js installation status
-  debug:
-    msg: "Node.js installation {{ 'succeeded' if nodejs_result is succeeded else 'failed - may already be installed from NodeSource' }}"
-  when: install_packages | bool
-
-- name: Install hub (Debian/Ubuntu)
-  apt:
-    name: hub
-    state: present
-  become: true
-  when: install_packages | bool
-  ignore_errors: true
-  register: hub_result
-
-- name: Display hub installation status
-  debug:
-    msg: "Hub installation {{ 'succeeded' if hub_result is succeeded else 'failed - skipping' }}"
-  when: install_packages | bool
+  when:
+    - install_packages | bool
+    - apt_packages is defined
+    - apt_packages | length > 0
 
 - name: Add 1Password GPG key (Debian/Ubuntu)
   shell: curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --dearmor -o /usr/share/keyrings/1password-archive-keyring.gpg
@@ -127,20 +107,6 @@
     name: 1password-cli
     state: present
   become: true
-  when:
-    - install_packages | bool
-    - ansible_os_family == "Debian"
-
-- name: Install Claude Code CLI
-  shell: curl -fsSL https://claude.ai/install.sh | bash
-  args:
-    creates: "{{ ansible_env.HOME }}/.local/bin/claude"
-  when: install_packages | bool
-
-- name: Install bun (Debian/Ubuntu)
-  shell: curl -fsSL https://bun.sh/install | bash
-  args:
-    creates: "{{ ansible_env.HOME }}/.bun/bin/bun"
   when:
     - install_packages | bool
     - ansible_os_family == "Debian"

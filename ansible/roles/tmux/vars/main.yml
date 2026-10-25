@@ -1,3 +1,12 @@
 ---
 tmux_package_debian: tmux
 tmux_package_darwin: tmux
+
+# tmuxship renders the tmux status bar with Starship; .tmux.conf expects it at ~/.cargo/bin/tmuxship
+tmuxship_repo: https://github.com/Yukaii/tmuxship
+
+# Starship configs for the left / right / per-window parts of the status bar
+tmux_status_configs:
+  - starship.toml
+  - .right.toml
+  - .center.toml

@@ -1,0 +1,14 @@
+#!/bin/bash
+# Toggle claude-code-proxy routing for the claude wrapper.
+set -euo pipefail
+
+flag="$HOME/.claude/claude-code-proxy-enabled"
+
+if [ -f "$flag" ]; then
+    rm "$flag"
+    echo "proxy: off"
+else
+    mkdir -p "$(dirname "$flag")"
+    touch "$flag"
+    echo "proxy: on"
+fi

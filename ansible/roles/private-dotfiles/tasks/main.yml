@@ -1,0 +1,84 @@
+---
+- name: Check for the private dotfiles repo
+  stat:
+    path: "{{ private_dotfiles_dir }}"
+  register: private_repo
+
+- name: Explain how to get the private dotfiles
+  debug:
+    msg:
+      - "{{ private_dotfiles_dir }} not found; skipping private dotfiles."
+      - "Clone git@github.com:borkweb/dotfiles-keys.git there (the git-repos role does this) and run ./vault.sh decrypt inside it."
+  when: not private_repo.stat.exists
+
+- name: Check which private files are available
+  stat:
+    path: "{{ private_dotfiles_dir }}/{{ item.src }}"
+  loop: "{{ private_dotfiles }}"
+  loop_control:
+    label: "{{ item.src }}"
+  register: private_files
+  when: private_repo.stat.exists
+
+- name: Check for ~/.ssh
+  stat:
+    path: "{{ ansible_env.HOME }}/.ssh"
+  register: ssh_dir
+
+- name: Create ~/.ssh with strict permissions when missing
+  file:
+    path: "{{ ansible_env.HOME }}/.ssh"
+    state: directory
+    mode: "0700"
+  when: not ssh_dir.stat.exists
+
+# No mode here: $HOME and existing directories keep whatever permissions they have.
+- name: Ensure destination directories exist
+  file:
+    path: "{{ item.item.dest | dirname }}"
+    state: directory
+  loop: "{{ private_files.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item.dest | dirname }}"
+  when:
+    - private_repo.stat.exists
+    - item.stat.exists
+
+- name: Symlink private dotfiles
+  file:
+    src: "{{ private_dotfiles_dir }}/{{ item.item.src }}"
+    dest: "{{ item.item.dest }}"
+    state: link
+    force: true
+  loop: "{{ private_files.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item.src }}"
+  when:
+    - private_repo.stat.exists
+    - item.stat.exists
+
+- name: List private files that still need decrypting
+  debug:
+    msg: "Not linked (run ./vault.sh decrypt in {{ private_dotfiles_dir }}): {{ private_files.results | default([]) | rejectattr('stat.exists') | map(attribute='item.src') | list }}"
+  when:
+    - private_repo.stat.exists
+    - private_files.results | default([]) | rejectattr('stat.exists') | list | length > 0
+
+- name: Find private bin scripts
+  find:
+    paths: "{{ private_dotfiles_dir }}/bin"
+    file_type: file
+  register: private_bin
+  when: private_repo.stat.exists
+
+- name: Symlink private bin scripts
+  file:
+    src: "{{ item.path }}"
+    dest: "{{ bin_dir }}/{{ item.path | basename }}"
+    state: link
+    force: true
+    mode: "0755"
+  loop: "{{ private_bin.files | default([]) }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
+  when: private_repo.stat.exists

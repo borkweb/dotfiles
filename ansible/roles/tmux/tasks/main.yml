@@ -26,6 +26,42 @@
     force: true
   tags: configs
 
+- name: Ensure ~/.tmux exists
+  file:
+    path: "{{ ansible_env.HOME }}/.tmux"
+    state: directory
+    mode: "0755"
+  tags: configs
+
+- name: Symlink tmuxship status bar configs
+  file:
+    src: "{{ repo_root }}/.tmux/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/.tmux/{{ item }}"
+    state: link
+    force: true
+  loop: "{{ tmux_status_configs }}"
+  tags: configs
+
+- name: Check for cargo
+  shell: command -v cargo
+  register: cargo_check
+  changed_when: false
+  failed_when: false
+
+- name: Install tmuxship
+  shell: cargo install --git {{ tmuxship_repo }}
+  args:
+    creates: "{{ ansible_env.HOME }}/.cargo/bin/tmuxship"
+  when:
+    - install_packages | bool
+    - cargo_check.rc == 0
+  tags: packages
+
+- name: Warn when cargo is unavailable
+  debug:
+    msg: "cargo not found; install rust and run: cargo install --git {{ tmuxship_repo }}"
+  when: cargo_check.rc != 0
+
 - name: Verify tmux installation
   command: tmux -V
   register: tmux_version

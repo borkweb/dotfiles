@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+# Build an installable Jetpack plugin zip from the monorepo.
+#
+# Usage:
+#   jetpack-build-zip                  # builds jetpack, writes ~/Downloads/jetpack-dev.zip
+#   jetpack-build-zip <plugin>         # e.g. jetpack-build-zip jetpack-boost
+#   jetpack-build-zip <plugin> <out>   # explicit output zip path
+#
+# Requires:
+#   - The `jp` CLI (https://github.com/Automattic/jetpack/tree/trunk/tools/cli)
+#   - A clean git working tree (enforced by `jp build --for-mirrors`)
+#   - `pnpm install` already run for the project
+#   - jq
+
+set -euo pipefail
+
+PLUGIN="${1:-jetpack}"
+OUT="${2:-$HOME/Downloads/${PLUGIN}-dev.zip}"
+
+MONOREPO_ROOT="${JETPACK_MONOREPO_ROOT:-$HOME/projects/a8c/jetpack}"
+PLUGIN_DIR="$MONOREPO_ROOT/projects/plugins/$PLUGIN"
+
+if [[ ! -d "$PLUGIN_DIR" ]]; then
+	echo "error: projects/plugins/$PLUGIN not found under $MONOREPO_ROOT" >&2
+	exit 1
+fi
+if ! command -v jq >/dev/null 2>&1; then
+	echo "error: jq is required (brew install jq)" >&2
+	exit 1
+fi
+
+MIRROR_REPO="$(jq -r '.extra["mirror-repo"] // empty' "$PLUGIN_DIR/composer.json")"
+if [[ -z "$MIRROR_REPO" ]]; then
+	echo "error: could not read .extra.mirror-repo from $PLUGIN_DIR/composer.json" >&2
+	exit 1
+fi
+
+cd "$MONOREPO_ROOT"
+
+# Refuse to run if anything is dirty (staged OR unstaged). We can't safely revert
+# our own mutations at cleanup time if we can't distinguish them from the user's
+# pre-existing edits. `git diff --quiet HEAD` catches both staged and unstaged
+# modifications to tracked files; untracked files are left alone either way.
+if ! git diff --quiet HEAD; then
+	echo "error: working tree has uncommitted changes. Commit or stash first." >&2
+	git status --short
+	exit 1
+fi
+WAS_CLEAN=1
+
+BUILD_DIR="$MONOREPO_ROOT/tmp/jetpack-build-zip"
+# Path as the jp CLI (running inside the monorepo Docker container) sees it.
+# Must be absolute because composer's COMPOSER_MIRROR_PATH_REPOS mode resolves
+# path repos per-project cwd — relative paths will fail to glob.
+BUILD_DIR_IN_CONTAINER="/workspace/tmp/jetpack-build-zip"
+
+# Always clean up the tmp build dir, and revert the composer.json mutations that
+# `jp build --for-mirrors` leaves behind — but only if we verified a clean tree
+# at startup. Otherwise we'd risk blowing away the user's pre-existing edits.
+STAGE_DIR=""
+cleanup() {
+	local exit_code=$?
+	trap - EXIT
+	echo
+	echo "→ Cleaning up"
+	[[ -n "$STAGE_DIR" && -d "$STAGE_DIR" ]] && rm -rf "$STAGE_DIR"
+	if [[ "${WAS_CLEAN:-0}" == "1" ]]; then
+		( cd "$MONOREPO_ROOT" && git checkout -- . ) || true
+	else
+		echo "  (skipped 'git checkout -- .' — tree was not verified clean at start)"
+	fi
+	rm -rf "$BUILD_DIR"
+	rmdir "$MONOREPO_ROOT/tmp" 2>/dev/null || true
+	exit "$exit_code"
+}
+trap cleanup EXIT
+
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
+
+echo "→ Building $PLUGIN for mirrors into $BUILD_DIR"
+CI=1 jp build "plugins/$PLUGIN" -v --no-pnpm-install --for-mirrors="$BUILD_DIR_IN_CONTAINER"
+
+MIRROR_SRC="$BUILD_DIR/$MIRROR_REPO"
+if [[ ! -d "$MIRROR_SRC" ]]; then
+	echo "error: expected mirror output at $MIRROR_SRC but it does not exist" >&2
+	exit 1
+fi
+
+# Stage the zip contents outside of BUILD_DIR so cleanup can safely nuke the
+# build tree. Jetpack Beta Tester expects a "<slug>-dev" directory name;
+# this matches the CI layout.
+STAGE_DIR="$(mktemp -d -t jetpack-build-zip.XXXXXX)"
+cp -R "$MIRROR_SRC" "$STAGE_DIR/${PLUGIN}-dev"
+
+mkdir -p "$(dirname "$OUT")"
+rm -f "$OUT"
+( cd "$STAGE_DIR" && zip -9 -rq "$OUT" "${PLUGIN}-dev" )
+
+echo
+echo "✓ Built $OUT"
+ls -lh "$OUT"

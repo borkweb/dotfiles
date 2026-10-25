@@ -1,0 +1,57 @@
+---
+# macOS-only desktop configuration: Ghostty terminal, Karabiner-Elements, launchd agents.
+
+- name: Ensure Ghostty config directory exists
+  file:
+    path: "{{ ghostty_config_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Symlink Ghostty config
+  file:
+    src: "{{ repo_root }}/.config/ghostty/config"
+    dest: "{{ ghostty_config_dir }}/config"
+    state: link
+    force: true
+
+- name: Check existing Karabiner config directory
+  stat:
+    path: "{{ karabiner_config_dir }}"
+  register: karabiner_dir
+
+- name: Back up an unmanaged Karabiner config directory
+  command: mv "{{ karabiner_config_dir }}" "{{ karabiner_config_dir }}.bak.{{ ansible_date_time.epoch }}"
+  when:
+    - not ansible_check_mode
+    - karabiner_dir.stat.exists
+    - karabiner_dir.stat.isdir
+    - not karabiner_dir.stat.islnk
+
+- name: Report what a real run would do to the Karabiner config directory
+  debug:
+    msg: "Would move {{ karabiner_config_dir }} to {{ karabiner_config_dir }}.bak.<epoch> and replace it with a symlink into the repo"
+  when:
+    - ansible_check_mode
+    - karabiner_dir.stat.exists
+    - karabiner_dir.stat.isdir
+    - not karabiner_dir.stat.islnk
+
+- name: Symlink Karabiner config directory
+  file:
+    src: "{{ repo_root }}/.config/karabiner"
+    dest: "{{ karabiner_config_dir }}"
+    state: link
+    force: true
+  when: not (ansible_check_mode and karabiner_dir.stat.exists and karabiner_dir.stat.isdir and not karabiner_dir.stat.islnk)
+
+- name: Ensure LaunchAgents directory exists
+  file:
+    path: "{{ launch_agents_dir }}"
+    state: directory
+
+- name: Install tc-handler launchd agent
+  template:
+    src: "{{ repo_root }}/launchd/com.borkweb.tc-handler.plist.j2"
+    dest: "{{ tc_handler_plist }}"
+    mode: "0644"
+  notify: reload tc-handler agent

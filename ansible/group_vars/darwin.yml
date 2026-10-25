@@ -1,35 +1,90 @@
 ---
+# Loaded by playbook.yml on macOS.
 package_manager: homebrew
 
-homebrew_packages:
-  - tmux
-  - zsh
-  - eza
-  - bat
-  - the_silver_searcher
-  - fzf
-  - hub
-  - node
-  - bun
-  - curl
-  - wget
-  - ffmpeg
-  - gd
-  - gdbm
-  - subversion
-  - 1password-cli
-
 homebrew_taps:
-  - homebrew/cask-fonts
+  - raine/claude-code-proxy
+  - peonping/tap
 
+# CLI tools. This mirrors `brew leaves` on the primary machine.
+homebrew_packages:
+  # shell + terminal
+  - bash
+  - tmux
+  - starship
+  - eza
+  - fd
+  - fzf
+  - the_silver_searcher
+  - zoxide
+  - htop
+  - gum
+  - shellcheck
+  - wget
+  # editors
+  - neovim
+  # git + github
+  - gh
+  - hub
+  - subversion
+  # languages + package managers
+  - go
+  - lua
+  - php
+  - php@8.3
+  - pipx
+  - pnpm
+  - rbenv
+  - ruby
+  - rust
+  - uv
+  - yarn
+  - cmake
+  # web + wordpress dev
+  - mariadb
+  - mailpit
+  - mkcert
+  - proxychains-ng
+  # media + documents
+  - ffmpeg
+  - imagemagick
+  - pandoc
+  - poppler
+  - sox
+  - whisper.cpp
+  # ai coding tools
+  - herdr
+  - rtk
+  - gemini-cli
+  - raine/claude-code-proxy/claude-code-proxy
+  - peonping/tap/peon-ping
+  # misc
+  - ansible
+  - nushell
+  - xcodegen
+
+# Desktop apps. Pre-existing apps are left alone (accept_external_apps).
 homebrew_cask_packages:
-  - font-meslo-lg-nerd-font
-  - postman
-  - spotify
-  - docker
-  - iterm2
+  - ghostty
   - google-chrome
-  - firefox
+  - visual-studio-code
+  - phpstorm
   - tableplus
-  - cursor
-  - wordpress-studio
+  - postman
+  - docker-desktop
+  - wordpresscom-studio
+  - slack
+  - obsidian
+  - raycast
+  - karabiner-elements
+  - 1password
+  - claude
+  - codex
+  - chatgpt
+  - switchhosts
+  - discord
+  - spotify
+  - zoom
+  - loom
+  - tailscale-app
+  - cyberduck

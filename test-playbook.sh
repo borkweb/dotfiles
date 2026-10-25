@@ -17,7 +17,7 @@ echo "✓ Dry run complete"
 echo
 
 echo "3. Verify role structure..."
-for role in common shell tmux ideavim bin-utils wordpress; do
+for role in common shell tmux editors git bin-utils claude-code macos git-repos private-dotfiles wordpress; do
   if [ -d "roles/$role/tasks" ]; then
     echo "✓ Role $role exists"
   else
@@ -28,7 +28,7 @@ done
 echo
 
 echo "4. Verify group_vars..."
-for varfile in all darwin wsl; do
+for varfile in all darwin debian; do
   if [ -f "group_vars/${varfile}.yml" ]; then
     echo "✓ group_vars/${varfile}.yml exists"
   else

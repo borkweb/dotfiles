@@ -1,11 +1,12 @@
 ---
-- name: Install shell packages
+- name: Install shell packages not available from apt (Debian/Ubuntu)
   include_tasks: install-packages.yml
+  when: ansible_os_family == "Debian"
   tags: packages
 
-- name: Install and configure oh-my-zsh
+- name: Install oh-my-zsh
   include_tasks: oh-my-zsh.yml
 
-- name: Configure zsh
+- name: Configure zsh and starship
   include_tasks: configure-zsh.yml
   tags: configs

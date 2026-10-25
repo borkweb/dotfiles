@@ -1,0 +1,34 @@
+---
+# Claude Code CLI plus the public parts of its configuration. settings.json and
+# CLAUDE.md are personal and come from dotfiles-keys via the private-dotfiles role.
+
+- name: Install Claude Code CLI
+  shell: curl -fsSL https://claude.ai/install.sh | bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/claude"
+  when: install_packages | bool
+  tags: packages
+
+- name: Ensure ~/.claude exists
+  file:
+    path: "{{ ansible_env.HOME }}/.claude"
+    state: directory
+    mode: "0755"
+
+- name: Symlink cship statusline config
+  file:
+    src: "{{ repo_root }}/.config/cship.toml"
+    dest: "{{ ansible_env.HOME }}/.config/cship.toml"
+    state: link
+    force: true
+
+- name: Check for cship
+  shell: command -v cship
+  register: cship_check
+  changed_when: false
+  failed_when: false
+
+- name: Note when cship is missing
+  debug:
+    msg: "cship (Claude Code statusline) not found; install it from https://cship.dev"
+  when: cship_check.rc != 0
