@@ -1,3 +1,0 @@
-#!/bin/bash
-
-npx @wp-now/wp-now start
