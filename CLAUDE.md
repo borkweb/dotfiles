@@ -20,7 +20,7 @@ belongs in the public repo at all.
 - `.config/nvim/init.lua` + `lazy-lock.json` — Neovim (lazy.nvim). `.vimrc` — the same settings for plain vim via Vundle; git's `core.editor` is still `vim`.
 - `.config/karabiner/karabiner.json` — Karabiner-Elements (Hyper key on Caps Lock, Alphabork layer). The whole directory is symlinked, so Karabiner's `automatic_backups/` and `assets/` are gitignored.
 - `.gitignore_global` — global git excludes. `.gitconfig` is private.
-- `bin/` — utility scripts symlinked into `~/bin`. `t`/`tc` (tmux session pickers), `git-worktree-*`, `cpt`/`clproxy` (claude-code-proxy helpers), `guild` (Guild Hall dev server), `jetpack-build-zip`, `playground`, `gentags`, supply-chain IOC scanners.
+- `bin/` — utility scripts symlinked into `~/bin`. `t`/`tc`/`tc-handler` (tmux session pickers and the launchd URL handler), `git-worktree-*`, `guild` (Guild Hall dev server), `gentags`. The role links whatever exists here and never removes stale entries from `~/bin`.
 - `launchd/com.borkweb.tc-handler.plist.j2` — launch agent template for `tc-handler`.
 - `wordpress/mu-plugins/` — local-dev must-use plugins; only linked when `wordpress_dev_path` is set.
 - `ansible/` — see below. `setup.sh`, `setup/setup-{mac,ubuntu}.sh` — bootstrap Ansible on a fresh machine. `test-playbook.sh` — syntax check + dry run.

@@ -30,12 +30,8 @@ Anything personal, work-specific or secret lives in a separate private repo,
 | `t` | fzf picker over `~/projects`, `~/git`, `~/sites` (and Claude worktrees) that opens or switches to a tmux session. |
 | `tc` / `tc-handler` | `tc <project>` opens a tmux session with a `claude` window; `tc-handler` is the launchd side of the URL handler. |
 | `git-worktree-add` / `git-worktree-remove` | Create or remove a sibling worktree (`../repo-branch`). |
-| `cpt` / `clproxy` | Helpers for [claude-code-proxy](https://github.com/raine/claude-code-proxy): `clproxy` starts the proxy, `cpt` toggles the `~/.claude/claude-code-proxy-enabled` flag. |
 | `guild` | Start, stop, or tail the Guild Hall dev server. |
-| `jetpack-build-zip` | Build an installable plugin zip from the Jetpack monorepo. |
-| `playground` | `npx @wp-now/wp-now start`. |
 | `gentags` | ctags for PHP/JS projects. |
-| `scan-shai-hulud.sh` / `tanstack-worm-cleaner.sh` | IOC scanner and cleaner for the 2026 "Mini Shai-Hulud" npm supply-chain campaign. |
 
 ## Quick start
 
